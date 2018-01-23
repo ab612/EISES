@@ -1,6 +1,6 @@
 ###mcb Ecoforecast prototype goal is to implement rules base from http://ecoforecast.coral.noaa.gov/index/0/MLRF1/model-detail&name=MASS-CORAL-BLEACHING and 'print' a forecast###
 __author__ = "Madison Soden"
-__date__ = "Thu Jan 18 15:28:22 2018"
+__date__ = "Tue Jan 23 13:59:02 2018"
 __license__ = "NA?"
 __version__ = "mcb"
 __email__ = "madison.soden@gmail.com"
@@ -9,6 +9,9 @@ __status__ = "Production"
 
 
 from pyknow import *
+import texttable as tt
+
+
 
 ###Fact Definition Documentation### 
     #fact names are declared as 'parsurf', 'sst', 'windsp', 'tide1m',
@@ -86,6 +89,8 @@ class windsp3day(Fact):
     #3-day average wind speed
     pass
 
+
+
 class MCB(KnowledgeEngine):
 
 #initial instruction output
@@ -111,13 +116,35 @@ class MCB(KnowledgeEngine):
 
 #function to pipe pyknow e.fact output into something legible
     def print_facts(self):
-        giantstring = e.fact
-        giantstring = giantstring.strip('FactList([')
-        giantstring = giantstring.strip(]))
-        giantstringlines = giantstring.split("), (")
-        while giantstringlines:
-            factstring = giantstringlines.pop(0)
-            print(factstring, "\n")
+        giantstring = self.facts.__str__()                    # giantstring = FactList([(0, InitialFact()), (1, parsurf(rRange='High', tod='midd')), (2, windsp(rRange='Low', tod='all')), (3, sst(rRange='High', tod='all'))])
+        giantstring = giantstring.strip('FactList([(')      # giantstring = (0, InitialFact()), (1, parsurf(rRange='High', tod='midd')), (2, windsp(rRange='Low', tod='all')), (3, sst(rRange='High', tod='all'))])
+        giantstring = giantstring.strip('])')               # giantstring = (0, InitialFact()), (1, parsurf(rRange='High', tod='midd')), (2, windsp(rRange='Low', tod='all')), (3, sst(rRange='High', tod='all'))
+        factlines =giantstring.split("), (")                # factlines[1] =1, parsurf(rRange='High', tod='midd')
+        printlist = []
+        while factlines:
+            factstring = factlines.pop(0)
+            key = factstring[0:1]                           # key = '1'    factstring = '1,parsurf(rRange='High', tod='midd')'
+            factstring = factstring[3:]                     # factstring = 'parsurf(rRange='High', tod='midd')'
+            factstring = factstring.split('(', 1)           # factstring = ( 'parsurf', "rRange='High', tod='midd')")
+            factname = factstring[0]                        # factname = 'parsurf'
+            factstring = factstring[1]                      # factstring = "rRange='High', tod='midd')"
+            factstring = factstring[:8]                     # factstring = "High', tod='midd')"
+            factstring = factstring[1].split('\'', 1)       # factstring =("High", ", tod='midd')")
+            rRangeAtt = factstring[0]                       # rRangeAtt = "High"
+            factstring = factstring[1].strip(' \', tod=\'') # factstring ="midd')"
+            factstring = factstring[1].split('\'', 1)       # factstring = ("midd", "')")
+            todAtt = factstring[0]                          # todAtt = "midd"
+            factlist = [key, factname, rRangeAtt, todAtt]   # factlist = ( "1", "parsurf", "High", "midd")
+            printlist.append(factlist)                      # printlist = ((factlist0), (factlist1),...)
+
+        table = tt.Texttable()
+        headings = ['Key', 'Fact', 'rRange', 'tod']
+        table.header(headings)
+        for x in printlist:
+            table.add_row(x)
+        s = table.draw()
+        print(s)
+
 
 #test functions to initialize specific combinations of facts
     def import_facts(self, filename='./test_suite/fact_CSVs/test1.csv'):
