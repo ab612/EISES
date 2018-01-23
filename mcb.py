@@ -116,29 +116,41 @@ class MCB(KnowledgeEngine):
 
 #function to pipe pyknow e.fact output into something legible
     def print_facts(self):
-        giantstring = self.facts.__str__()                    # giantstring = FactList([(0, InitialFact()), (1, parsurf(rRange='High', tod='midd')), (2, windsp(rRange='Low', tod='all')), (3, sst(rRange='High', tod='all'))])
-        giantstring = giantstring.strip('FactList([(')      # giantstring = (0, InitialFact()), (1, parsurf(rRange='High', tod='midd')), (2, windsp(rRange='Low', tod='all')), (3, sst(rRange='High', tod='all'))])
-        giantstring = giantstring.strip('])')               # giantstring = (0, InitialFact()), (1, parsurf(rRange='High', tod='midd')), (2, windsp(rRange='Low', tod='all')), (3, sst(rRange='High', tod='all'))
-        factlines =giantstring.split("), (")                # factlines[1] =1, parsurf(rRange='High', tod='midd')
+## messy parsing of giantstring'
+        giantstring = self.facts.__str__()
+        giantstring = giantstring.strip('<f-')
+        giantstring = giantstring.rstrip(')')
+        factlines =giantstring.split(")\n<f-")
         printlist = []
         while factlines:
             factstring = factlines.pop(0)
-            key = factstring[0:1]                           # key = '1'    factstring = '1,parsurf(rRange='High', tod='midd')'
-            factstring = factstring[3:]                     # factstring = 'parsurf(rRange='High', tod='midd')'
-            factstring = factstring.split('(', 1)           # factstring = ( 'parsurf', "rRange='High', tod='midd')")
-            factname = factstring[0]                        # factname = 'parsurf'
-            factstring = factstring[1]                      # factstring = "rRange='High', tod='midd')"
-            factstring = factstring[:8]                     # factstring = "High', tod='midd')"
-            factstring = factstring[1].split('\'', 1)       # factstring =("High", ", tod='midd')")
-            rRangeAtt = factstring[0]                       # rRangeAtt = "High"
-            factstring = factstring[1].strip(' \', tod=\'') # factstring ="midd')"
-            factstring = factstring[1].split('\'', 1)       # factstring = ("midd", "')")
-            todAtt = factstring[0]                          # todAtt = "midd"
-            factlist = [key, factname, rRangeAtt, todAtt]   # factlist = ( "1", "parsurf", "High", "midd")
-            printlist.append(factlist)                      # printlist = ((factlist0), (factlist1),...)
+            key = factstring[0:1]
+            factstring = factstring[4:]
+            factstring = factstring.split('(', 1)
+            factname = factstring[0]
+            print('|', factname, '|') #DEBUG
+            if len(factstring[1]) > 4:
+                factstring = factstring[1]
+                factstring = factstring[8:]
+                factstring = factstring.split('\'', 1)
+                rRangeAtt = factstring[0]
+                factstring = factstring[1].strip(', fuzzyTod=\'')
+                factstring = factstring.split('\'', 1)
+                todAtt = factstring[0]
+                factstring = factstring[1].strip(', date=\'')
+                factstring = factstring.split('\'', 1)
+                dateAtt = factstring[0]
+                factstring = factstring[1].strip(', locus=\'')
+                factstring = factstring.split('\'', 1)
+                locusAtt = factstring[0]
+            else :
+                rRangeAtt, todAtt, dateAtt, locusAtt = ' ', ' ', ' ', ' '
+            factlist = [key, factname, rRangeAtt, todAtt, dateAtt, locusAtt]
+            printlist.append(factlist)
 
+##formatting printlist using Texttable library
         table = tt.Texttable()
-        headings = ['Key', 'Fact', 'rRange', 'tod']
+        headings = ['Key', 'Fact', 'fuzzyI', 'fuzzyTod', 'Date', 'Locus']
         table.header(headings)
         for x in printlist:
             table.add_row(x)
