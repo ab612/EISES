@@ -102,12 +102,16 @@ class MCB(KnowledgeEngine):
         \n
         To add facts to fact list call:
         >> e.declare_facts()
+        >> e.declare_facts('factname', 'fuzzyI', 'fuzzyTod', 'date', 'locus')
+        \n
+        To import a fact csv call:
+        >> e.import_facts('./test_suite/fact_CSVs/testX.csv')
         \n
         To view current rule base call:
         >> e.get_rules()
         \n
         To view current fact base call:
-        >> e.facts
+        >> e.print_facts()
         \n
         To run Knowledge Engine call:
         >> e.run()
@@ -128,19 +132,21 @@ class MCB(KnowledgeEngine):
             factstring = factstring[4:]
             factstring = factstring.split('(', 1)
             factname = factstring[0]
-            print('|', factname, '|') #DEBUG
             if len(factstring[1]) > 4:
                 factstring = factstring[1]
                 factstring = factstring[8:]
                 factstring = factstring.split('\'', 1)
                 rRangeAtt = factstring[0]
-                factstring = factstring[1].strip(', fuzzyTod=\'')
+                factstring = factstring[1]
+                factstring = factstring[12:]
                 factstring = factstring.split('\'', 1)
                 todAtt = factstring[0]
-                factstring = factstring[1].strip(', date=\'')
+                factstring = factstring[1]
+                factstring = factstring[8:]
                 factstring = factstring.split('\'', 1)
                 dateAtt = factstring[0]
-                factstring = factstring[1].strip(', locus=\'')
+                factstring = factstring[1]
+                factstring = factstring[9:]
                 factstring = factstring.split('\'', 1)
                 locusAtt = factstring[0]
             else :
@@ -156,7 +162,6 @@ class MCB(KnowledgeEngine):
             table.add_row(x)
         s = table.draw()
         print(s)
-
 
 #test functions to initialize specific combinations of facts
     def import_facts(self, filename='./test_suite/fact_CSVs/test1.csv'):
@@ -192,26 +197,88 @@ class MCB(KnowledgeEngine):
                 done = input('  ')
 
 ###RULE DECLARATIONS###
-#Unbelievable or missing info Rules
+#Unbelievable value Rules
     @Rule(OR(sst(fuzzyI='uLow'), sst(fuzzyI='uHigh')))
-    def u1(self):
+    def unbelievable_sst(self):
         print("sst values in unbelievable range")
 
     @Rule(OR(windsp(fuzzyI='uLow'), windsp(fuzzyI='uHigh')))
-    def u2(self):
+    def unbelivable_windsp(self):
         print("wind scalar values in unbelievable range")
 
+    @Rule(OR(seandbc(fuzzyI='uLow'), sst(fuzzyI='uHigh')))
+    def unbelivable_seandbc(self):
+        print("seandbc values in unbelievable range")
+
+    @Rule(OR(parsurf(fuzzyI='uLow'), sst(fuzzyI='uHigh')))
+    def unbelivable_parsurf(self):
+        print("parsurf values in unbelievable range")
+
+    @Rule(OR(tide1m(fuzzyI='uLow'), sst(fuzzyI='uHigh')))
+    def unbelivable_tide1m(self):
+        print("tide1m values in unbelievable range")
+
+    @Rule(OR(sea1m(fuzzyI='uLow'), sst(fuzzyI='uHigh')))
+    def unbelivalbe_sea1m(self):
+        print("sea1m values in unbelievable range")
+
+    @Rule(OR(seandbcM(fuzzyI='uLow'), sst(fuzzyI='uHigh')))
+    def unbelivale_seandbcM(self):
+        print("seandbcM values in unbelievable range")
+
+    @Rule(OR(windsp3day(fuzzyI='uLow'), sst(fuzzyI='uHigh')))
+    def unbelivable_windsp3day(self):
+        print("windsp3day values in unbelievable range")
+
+#Missing info rules
     @Rule(NOT(sst(fuzzyI= L('uLow') | L('dLow') | L('vLow') | L('Low') | L('sLow') |
         L('average') | L('sHigh') | L('High') | L('vHigh') | L('dHigh') |
         ('uHigh'))))
-    def m1(self):
+    def missing_fI_sst(self):
         print("missing or unreadable value for sst fuzzyI")
+
+    @Rule(NOT(seandbc(fuzzyI= L('uLow') | L('dLow') | L('vLow') | L('Low') | L('sLow') |
+        L('average') | L('sHigh') | L('High') | L('vHigh') | L('dHigh') |
+        ('uHigh'))))
+    def missing_fI_seandbc(self):
+        print("missing or unreadable value for seandbc fuzzyI")
+
+    @Rule(NOT(parsurf(fuzzyI= L('uLow') | L('dLow') | L('vLow') | L('Low') | L('sLow') |
+        L('average') | L('sHigh') | L('High') | L('vHigh') | L('dHigh') |
+        ('uHigh'))))
+    def missing_fI_parsurf(self):
+        print("missing or unreadable value for parsurf fuzzyI")
 
     @Rule(NOT(windsp(fuzzyI= L('uLow') | L('dLow') | L('vLow') | L('Low') | L('sLow') |
         L('average') | L('sHigh') | L('High') | L('vHigh') | L('dHigh') |
-        L('uHigh'))))
-    def m2(self):
+        ('uHigh'))))
+    def missing_fI_windsp(self):
         print("missing or unreadable value for windsp fuzzyI")
+
+    @Rule(NOT(tide1m(fuzzyI= L('uLow') | L('dLow') | L('vLow') | L('Low') | L('sLow') |
+        L('average') | L('sHigh') | L('High') | L('vHigh') | L('dHigh') |
+        ('uHigh'))))
+    def missing_fI_tide1m(self):
+        print("missing or unreadable value for tide1m fuzzyI")
+
+    @Rule(NOT(sea1m(fuzzyI= L('uLow') | L('dLow') | L('vLow') | L('Low') | L('sLow') |
+        L('average') | L('sHigh') | L('High') | L('vHigh') | L('dHigh') |
+        ('uHigh'))))
+    def missing_fI_sea1m(self):
+        print("missing or unreadable value for sea1m fuzzyI")
+
+    @Rule(NOT(seandbcM(fuzzyI= L('uLow') | L('dLow') | L('vLow') | L('Low') | L('sLow') |
+        L('average') | L('sHigh') | L('High') | L('vHigh') | L('dHigh') |
+        ('uHigh'))))
+    def missing_fI_seandbcM(self):
+        print("missing or unreadable value for seandbcM fuzzyI")
+
+    @Rule(NOT(windsp3day(fuzzyI= L('uLow') | L('dLow') | L('vLow') | L('Low') | L('sLow') |
+        L('average') | L('sHigh') | L('High') | L('vHigh') | L('dHigh') |
+        L('uHigh'))))
+    def missing_fI_windsp3day(self):
+        print("missing or unreadable value for windsp3day fuzzyI")
+
 
 #MCB MASS-CORAL-BLEACHING implementation (forecast model has 24 rules)
 #Description: Mass bleaching of hard corals
