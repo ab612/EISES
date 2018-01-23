@@ -1,17 +1,19 @@
-#!/Users/soden/ python
-
-###mcb0_9 Ecoforecast prototype goal is to implement rules base from http://ecoforecast.coral.noaa.gov/index/0/MLRF1/model-detail&name=MASS-CORAL-BLEACHING and 'print' a forecast###
-
-from pyknow import *
-
+###mcb Ecoforecast prototype goal is to implement rules base from http://ecoforecast.coral.noaa.gov/index/0/MLRF1/model-detail&name=MASS-CORAL-BLEACHING and 'print' a forecast###
 __author__ = "Madison Soden"
-__date__ = "Mon Jan  8 14:44:18 2018"
+__date__ = "Thu Jan 18 15:28:22 2018"
 __license__ = "NA?"
-__version__ = "mcb0_9"
+__version__ = "mcb"
 __email__ = "madison.soden@gmail.com"
 __status__ = "Production"
 
+
+
+from pyknow import *
+
 ###Fact Definition Documentation### 
+    #fact names are declared as 'parsurf', 'sst', 'windsp', 'tide1m',
+    #'seandbc', 'sea1m', 'curveB', 'sea1mM', 'seandbcM', 'windsp3day'
+
     #fuzzyI is a string containing a fuzzy (i.e. proxy) values for sst 
     #key = 'fuzzyI' / 0
     #fuzzy values can be 'uLow', 'dLow', 'vLow', 'Low', 'sLow', 'average', 'sHigh',
@@ -90,7 +92,7 @@ class MCB(KnowledgeEngine):
     print("""\n
         ----------------------------------------------------------------------
         To declare Knowledge Engine:
-        >> e = mcb0_9.MCB()
+        >> e = mcb.MCB()
         >> e.reset()
         \n
         To add facts to fact list call:
@@ -105,19 +107,30 @@ class MCB(KnowledgeEngine):
         To run Knowledge Engine call:
         >> e.run()
         ----------------------------------------------------------------------
-        \n \n \n""")
+         \n \n \n""")
+
+#function to pipe pyknow e.fact output into something legible
+    def print_facts(self):
+        giantstring = e.fact
+        giantstring = giantstring.strip('FactList([')
+        giantstring = giantstring.strip(]))
+        giantstringlines = giantstring.split("), (")
+        while giantstringlines:
+            factstring = giantstringlines.pop(0)
+            print(factstring, "\n")
 
 #test functions to initialize specific combinations of facts
-    def import_facts(self, filename='test1.txt'):
-#        with open (filename) as f:
+    def import_facts(self, filename='./test_suite/fact_CSVs/test1.csv'):
         factlines= [x.rstrip('\n') for x in open(filename)]
         while factlines:
             factString = factlines.pop(0)
-            factName, factFuzzyI, factFuzzyTod, factDate, factLocus = factString.split(" ")
+            factName, factFuzzyI, factFuzzyTod, factDate, factLocus = factString.split(",")
             print("DECLARED: ", factName, " ", factFuzzyI, " ", factFuzzyTod, " ",
                     factDate, " ", factLocus, "\n")
             exec("self.declare(%s(fuzzyI=factFuzzyI, fuzzyTod=factFuzzyTod, date=factDate, locus=factLocus))" % (factName))
 
+#function to automate declaring facts: has a function call mode w/ attributes
+##or an interactive mode for terminal
     def declare_facts(self, x='na', y='na', z='na'):
         if x!='na':
             print("""
@@ -411,10 +424,4 @@ class MCB(KnowledgeEngine):
     def mcb24(self):
         print("Coral-Bleaching-T fired")
 
-
-#import mcb0_9 as a
-#e = a.MCB()
-#e.reset()
-#e.facts """displays current fact list in working memory"""
-#e.run()
 

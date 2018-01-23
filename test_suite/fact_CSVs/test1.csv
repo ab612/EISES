@@ -1,1 +1,8 @@
 sst,sLow,aftn,date,locus
+seandbc,uLow,morn,date,locus
+parsurf,High,even,date,locus
+windsp,sLow,suns,date,locus
+tide1m,vHigh,dayb,date,locus
+sea1m,average,midd,date,locus
+seandbcM,uHigh,pdaw,date,locus
+windsp3day,vHigh,all,date,locus
