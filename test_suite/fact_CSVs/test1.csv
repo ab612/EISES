@@ -1,8 +1,10 @@
-sst,sLow,aftn,date,locus
-seandbc,uLow,morn,date,locus
-parsurf,High,even,date,locus
-windsp,sLow,suns,date,locus
-tide1m,vHigh,dayb,date,locus
-sea1m,average,midd,date,locus
-seandbcM,uHigh,pdaw,date,locus
-windsp3day,vHigh,all,date,locus
+sst,sLow,aftn,01232018,Great Barrier Reef
+seandbc,uLow,morn,10051994,Key West
+parsurf,High,even,12345678,Area 51
+windsp,sLow,suns,10312017,Princeton NJ
+tide1m,vHigh,dayb,05202014,Coral Gables
+sea1m,average,midd,02302013,Molasses Reef
+seandbcM,uHigh,pdaw,12242015,Narnia
+windsp3day,vHigh,all,06172008,isAduck
+sea1mM,average,morn,06172008,Mordoor
+curveB,sHigh,suns,06172008,Hyrule
