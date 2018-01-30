@@ -1,6 +1,6 @@
 ###mcb Ecoforecast prototype goal is to implement rules base from http://ecoforecast.coral.noaa.gov/index/0/MLRF1/model-detail&name=MASS-CORAL-BLEACHING and 'print' a forecast###
 __author__ = "Madison Soden"
-__date__ = "Tue Jan 23 13:59:02 2018"
+__date__ = "Tue Jan 30 11:12:24 2018"
 __license__ = "NA?"
 __version__ = "mcb"
 __email__ = "madison.soden@gmail.com"
@@ -11,7 +11,20 @@ __status__ = "Production"
 from pyknow import *
 import texttable as tt
 
-
+###FUNCTION NOMENCLATURE###
+    #for rules containing an above average fuzzyI fact character indexes are capitalized
+    #for rules containing an average of bellow fuzzyI fact character indexes are lower case
+    #fact character index:
+    ## parsurf      -    p
+    ## sst          -    s
+    ## windsp       -    w
+    ## tide1m       -    t
+    ## seandbc      -    a
+    ## sea1m        -   e
+    ## curveB       -   b
+    ## sea1mM       -   eM
+    ## seandbcM     -   aM
+    ## windsp3day   -   w3
 
 ###Fact Definition Documentation### 
     #fact names are declared as 'parsurf', 'sst', 'windsp', 'tide1m',
@@ -89,6 +102,21 @@ class windsp3day(Fact):
     #3-day average wind speed
     pass
 
+def printRuleRef():
+    print("""
+    for rules containing an above average fuzzyI fact character indexes are capitalized
+    for rules containing an average of bellow fuzzyI fact character indexes are lower case
+    fact character index:
+     parsurf      -    p
+     sst          -    s
+     windsp       -    w
+     tide1m       -    t
+     seandbc      -    a
+     sea1m        -   e
+     curveB       -   b
+     sea1mM       -   eM
+     seandbcM     -   aM
+     windsp3day   -   w3""")
 
 
 class MCB(KnowledgeEngine):
@@ -109,6 +137,9 @@ class MCB(KnowledgeEngine):
         \n
         To view current rule base call:
         >> e.get_rules()
+        \n
+        To view rule nomenclature reference call:
+        >> mcb.printRuleRef()
         \n
         To view current fact base call:
         >> e.print_facts()
