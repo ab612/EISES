@@ -7,6 +7,7 @@ __email__ = "madison.soden@gmail.com"
 __status__ = "Production"
 
 
+############################################################################################???????????????????????????? rule 18 verse rule 20 supposed to call different facts???????????????????????
 
 from pyknow import *
 import texttable as tt
@@ -102,22 +103,19 @@ class windsp3day(Fact):
     #3-day average wind speed
     pass
 
-def printRuleRef():
-    print("""
-    for rules containing an above average fuzzyI fact character indexes are capitalized
-    for rules containing an average of bellow fuzzyI fact character indexes are lower case
-    fact character index:
-     parsurf      -    p
-     sst          -    s
-     windsp       -    w
-     tide1m       -    t
-     seandbc      -    a
-     sea1m        -   e
-     curveB       -   b
-     sea1mM       -   eM
-     seandbcM     -   aM
-     windsp3day   -   w3""")
-
+def RuleRef( index):
+    ruleDict = {
+        'p': '    p    -    parsurf',
+        's': '    s    -    sst',
+        'w': '    w    -    windsp',
+        't': '    t    -    tide1m',
+        'a': '    a    -    seandbc',
+        'e': '    e    -    sea1m',
+        'b': '    b    -    curveB',
+        'eM': '    eM    -    sea1mM',
+        'aM': '    aM    -    seandbcM',
+        'w3': '    w3    -    windsp3day'}
+    return ruleDict.get( index, "incorrect input")
 
 class MCB(KnowledgeEngine):
 
@@ -331,7 +329,7 @@ class MCB(KnowledgeEngine):
 #MCB MASS-CORAL-BLEACHING implementation (forecast model has 24 rules)
 #Description: Mass bleaching of hard corals
 
-##Ecoforecast Rule #1: Coral-Bleaching-Itlwt
+##Ecoforecast Rule #1: Coral-Bleaching-PtwA
 ##Description: Mass coral bleaching (high in-situ sea temperature + high light + low wind + low tide)
     @Rule(parsurf(fuzzyI=L('High') | L('vHigh') | L('dHigh')),
             parsurf(fuzzyTod=L('midd') | L('psun') | L('dayl') | L('aftn') | L('all')),
@@ -341,10 +339,12 @@ class MCB(KnowledgeEngine):
             windsp(fuzzyTod=L('morn') | L('midd') | L('psun') | L('dayl') | L('dayb') | L('aftn') | L('all')),
             seandbc(fuzzyI=L('High') | L('vHigh') | L('dHigh')),
             seandbc(fuzzyTod=W()))
-    def mcb_ITlwt(self):
-        print("Coral-Bleaching-Itlwt fired")
+    def mcb_PtwA(self):
+        print("- Coral-Bleaching-PtwA fired")
+        print( RuleRef('p'), RuleRef('t'), RuleRef('w'),
+                RuleRef('a'))
 
-##Ecoforecast Rule #2: Coral-Bleaching-Stlwt
+##Ecoforecast Rule #2: Coral-Bleaching-PtwE
 ##Description: Mass coral bleaching (high 'shallow' sea temperature + high light + low wind + low tide)
     @Rule(parsurf(fuzzyI=L('High') | L('vHigh') | L('dHigh')), 
             parsurf(fuzzyTod=L('midd') | L('dayl') | L('all')),
@@ -354,10 +354,12 @@ class MCB(KnowledgeEngine):
             windsp(fuzzyTod=L('morn') | L('midd') | L ('psun') | L('dayl') | L('dayb') | L('aftn') | L('all')),
             sea1m(fuzzyI=L('High') | L('vHigh') | L('dHigh')),
             sea1m(fuzzyTod=W()))
-    def mcb_Stlwt(self):
-        print("Coral-Bleaching-Stlwt fired")
+    def mcb_PtwE(self):
+        print("- Coral-Bleaching-PtwE fired")
+        print( RuleRef('p'),  RuleRef('t'), RuleRef('w'),
+                RuleRef('e'))
 
-##Ecoforecast Rule #3: Coral-Bleaching-Tlwt
+##Ecoforecast Rule #3: Coral-Bleaching-PtwS
 ##Description: Mass coral bleaching (high SST + high light + low wind + low tide)
     @Rule(parsurf(fuzzyI=L('High') | L('vHigh') | L('dHigh')),
             parsurf(fuzzyTod=L('midd') | L('dayl') | L('all')),
@@ -367,10 +369,12 @@ class MCB(KnowledgeEngine):
             windsp(fuzzyTod=L('morn') | L('midd') | L('psun') | L('dayl') | L('dayb') | L('aftn') | L('aftn') | L('all')),
             sst(fuzzyI=L('High') | L('vHigh') | L('dHigh')),
             sst(fuzzyTod=W()))
-    def mcb_Tlwt(self):
-        print("Coral-Bleaching-Tlwt fired")
+    def mcb_PtwS(self):
+        print("- Coral-Bleaching-Tlwt fired")
+        print( RuleRef('t'), RuleRef('l'), RuleRef('w'),
+                RuleRef('t'))
 
-##Ecoforecast Rule #4: Coral-Bleaching-Itlw
+##Ecoforecast Rule #4: Coral-Bleaching-PwA
 ## Description: Mass coral bleaching (high in-situ sea temperature + high light + low wind)
     @Rule(parsurf(fuzzyI=L('High') | L('vHigh') | L('dHigh')),
             parsurf(fuzzyTod=L('midd') | L('psun') | L('dayl') | L('aftn') | L('all')),
@@ -378,10 +382,11 @@ class MCB(KnowledgeEngine):
             windsp(fuzzyTod=L('morn') | L('midd') | L('psun') | L('dayl') | L('dayb') | L('aftn') | L('all')),
             seandbc(fuzzyI=L('High') | L('vHigh') | L('dHigh')),
             seandbc(fuzzyTod=W()))
-    def mcb_Itlw(self):
-        print("Coral-Bleaching-Itlw fired")
+    def mcb_PwA(self):
+        print("- Coral-Bleaching-PwA fired")
+        print( RuleRef('p'), RuleRef('w'), RuleRef('a'))
 
-##Ecoforecast Rule #5: Coral-Bleaching-Itwt
+##Ecoforecast Rule #5: Coral-Bleaching-twA
 ##Description: Mass coral bleaching (high in-situ sea temperature + low wind + low tide)
     @Rule(tide1m(fuzzyI=L('dLow') | L('vLow') | L('low')),
             tide1m(fuzzyTod=L('morn') | L('midd') | L('psun') | L('dayl') | L('dayb') | L('aftn') | L('all')),
@@ -389,10 +394,11 @@ class MCB(KnowledgeEngine):
             windsp(fuzzyTod=L('morn') | L('midd') | L('psun') | L('day') | L('dayb') | L('aftn') | L('all')),
             seandbc(fuzzyI=L('High') | L('vHigh') | L('dHigh')),
             seandbc(fuzzyTod=W()))
-    def mcb_Itwt(self):
-        print("Coral-Bleaching-Itwt")
+    def mcb_twA(self):
+        print("- Coral-Bleaching-twA")
+        print( RuleRef('t'), RuleRef('w'), RuleRef('a'))
 
-##Ecoforecast Rule #6: Coral-Bleaching-Stlw
+##Ecoforecast Rule #6: Coral-Bleaching-PwE
 ##Description: Mass coral bleaching (high 'shallow' sea temperature + high light + low wind)
     @Rule(parsurf(fuzzyI=L('High') | L('vHigh') | L('dHigh')),
             parsurf(fuzzyTod=L('midd') | L('dayl') | L('all')),
@@ -400,10 +406,11 @@ class MCB(KnowledgeEngine):
             windsp(fuzzyTod=L('morn') | L('midd') | L('psun') | L('dayl') | L('dayb') | L('aftn') | L('all')),
             sea1m(fuzzyI=L('High') | L('vHigh') | L('dHigh')),
             sea1m(fuzzyTod=W()))
-    def mcb_Stlw(self):
-        print("Coral-Bleaching-Stlw fired")
+    def mcb_PwE(self):
+        print("- Coral-Bleaching-PwE fired")
+        print( RuleRef('p'), RuleRef('w'), RuleRef('e'))
 
-##Ecoforecast Rule #7: Coral-Bleaching-Stwt
+##Ecoforecast Rule #7: Coral-Bleaching-twE
 ##Description: Mass coral bleaching (high 'shallow' sea temperature + low wind + low tide)
     @Rule(tide1m(fuzzyI=L('dLow') | L('vLow') | L('Low')),
             tide1m(fuzzyTod=L('morn') | L('midd') | L('psun') | L('dayl') | L('dayb') | L('aftn') | L('all')),
@@ -411,11 +418,12 @@ class MCB(KnowledgeEngine):
             windsp(fuzzyTod=L('morn') | L('midd') | L('psun') | L('dayl') | L('dayb') | L('aftn') | L('all')),
             sea1m(fuzzyI=L('High') | L('vHigh') | L('dHigh')),
             sea1m(fuzzyTod=W()))
-    def mcb_Stwt(self):
-        print("Coral-Bleaching-Stwt fired")
+    def mcb_twE(self):
+        print("- Coral-Bleaching-twE fired")
+        print( RuleRef('t'), RuleRef('w'), RuleRef('e'))
 
 
-##Ecoforecast Rule #8: Coral-Bleaching-Tlw
+##Ecoforecast Rule #8: Coral-Bleaching-PwS
 ##Description: Mass coral bleaching (high SST + high light + low wind)
     @Rule(parsurf(fuzzyI=L('High') | L('vHigh') | L('dHigh')),
             parsurf(fuzzyTod=L('midd') | L('dayl') | L('all')),
@@ -423,10 +431,11 @@ class MCB(KnowledgeEngine):
             windsp(fuzzyTod=L('morn') | L('midd') | L('psun') | L('dayl') | L('dayb') | L('aftn') | L('all')),
             sst(fuzzyI=L('High') | L('vHigh') | L('dHigh')),
             sst(fuzzyTod=W()))
-    def mcb_Tlw(self):
-        print("Coral-Bleaching-Tlw fired")
+    def mcb_PwS(self):
+        print("- Coral-Bleaching-PwS fired")
+        print( RuleRef('p'), RuleRef('w'), RuleRef('s'))
 
-##Ecoforecast Rule #9: Coral-Bleaching-Twt
+##Ecoforecast Rule #9: Coral-Bleaching-twS
 ##Description: Mass coral bleaching (high SST + low wind + low tide)
     @Rule(tide1m(fuzzyI=L('dLow') | L('vLow') | L('Low')),
             tide1m(fuzzyTod=L('morn') | L('midd') | L('psun') | L('dayl') | L('dayb') | L('aftn') | L('all')),
@@ -434,128 +443,144 @@ class MCB(KnowledgeEngine):
             windsp(fuzzyTod=L('morn') | L('midd') | L('psun') | L('dayl') | L('dayb') | L('aftn') | L('all')),
             sst(fuzzyI=L('High') | L('vHigh') | L('dHigh')),
             sst(fuzzyTod=W()))
-    def mcb_Twt(self):
-        print("Coral-Bleaching-Twt fired")
+    def mcb_twS(self):
+        print("- Coral-Bleaching-twS fired")
+        print( RuleRef('t'), RuleRef('w'), RuleRef('s'))
 
-##Ecoforecast Rule #10: Coral-Bleaching-Itd
+##Ecoforecast Rule #10: Coral-Bleaching-w3A
 ##Description: Mass coral bleaching (high in-situ sea temperature + doldrums)
     @Rule(windsp3day(fuzzyI=L('dLow') | L('vLow') | L('Low')),
             windsp3day(fuzzyTod=W()),
             seandbc(fuzzyI=L('High') | L('vHigh') | L('dHigh')),
             seandbc(fuzzyTod=W()))
-    def mcb_Itd(self):
-        print("Coral-Bleaching-Itd fired")
+    def mcb_w3A(self):
+        print("- Coral-Bleaching-w3A fired")
+        print( RuleRef('w3'), RuleRef('a'))
 
-##Ecoforecast Rule #11: Coral-Bleaching-Itl
+##Ecoforecast Rule #11: Coral-Bleaching-PA
 ##Description: Mass coral bleaching (very high in-situ sea temperature + very high light)
     @Rule(parsurf(fuzzyI=L('vHigh') | L('dHigh')),
             parsurf(fuzzyTod=L('midd') | L('psun') | L('dayl') | L('aftn') | L('all')),
             seandbc(fuzzyI=L('vHigh') | L('dHigh')),
             seandbc(fuzzyTod=W()))
-    def mcb_Itl(self):
-        print("Coral-Bleaching-Itl fired")
+    def mcb_PA(self):
+        print("- Coral-Bleaching-PA fired")
+        print( RuleRef('p'), RuleRef('a'))
 
-##Ecoforecast Rule #12: Coral-Bleaching-Itw
+##Ecoforecast Rule #12: Coral-Bleaching-wA
 ##Description: Mass coral bleaching (very high in-situ sea temperature + very low wind)
     @Rule(windsp(fuzzyI=L('dLow') | L('vLow')),
             windsp(fuzzyTod=L('morn') | L('midd') | L('psun') | L('dayl') | L('dayb') | L('aftn') | L('all')),
             seandbc(fuzzyI=L('vHigh') | L('dHigh')),
             seandbc(fuzzyTod=W()))
-    def mcb_Itw(self):
-        print("Coral-Bleaching-Itw fired")
+    def mcb_wA(self):
+        print("- Coral-Bleaching-wA fired")
+        print( RuleRef('w'), RuleRef('a'))
 
-##Ecoforecast Rule #13: Coral-Bleaching-Std
+##Ecoforecast Rule #13: Coral-Bleaching-w3E
 ##Description: Mass coral bleaching (high 'shallow' sea temperature + doldrums)
     @Rule(windsp3day(fuzzyI=L('dLow') | L('vLow') | L('Low')),
             windsp3day(fuzzyTod=W()),
             sea1m(fuzzyI=L('High') | L('dHigh') | L('vHigh')),
             sea1m(fuzzyTod=W()))
-    def mcb_Std(self):
-        print("Coral-Bleaching-Std fired")
+    def mcb_w3E(self):
+        print("- Coral-Bleaching-w3E fired")
+        print( RuleRef('w3'), RuleRef('e'))
 
-##Ecoforecast Rule #14: Coral-Bleaching-Stl
+##Ecoforecast Rule #14: Coral-Bleaching-PE
 ##Description: Mass coral bleaching (very high 'shallow' sea temperature + very high light)
     @Rule(parsurf(fuzzyI=L('vHigh') | L('dHigh')),
             parsurf(fuzzyTod=L('midd') | L('dayl') | L('all')),
             sea1m(fuzzyI=L('vHigh') | L('dHigh')),
             sea1m(fuzzyTod=W()))
-    def mcb_Stl(self):
-        print("Coral-Bleaching-Stl fired")
+    def mcb_PE(self):
+        print("- Coral-Bleaching-PE fired")
+        print( RuleRef('p'), RuleRef('e'))
 
-##Ecoforecast Rule #15: Coral-Bleaching-Stw
+##Ecoforecast Rule #15: Coral-Bleaching-wE
 ##Description: Mass coral bleaching (very high 'shallow' sea temperature + very low wind)
     @Rule(windsp(fuzzyI=L('dLow') | L('vLow')),
             windsp(fuzzyTod=L('morn') | L('midd') | L('psun') | L('dayl') | L('dayb') | L('aftn') | L('all')),
             sea1m(fuzzyI=L('vHigh') | L('dHigh')),
             sea1m(fuzzyTod=W()))
-    def mcb_Stw(self):
-        print("Coral-Bleaching-Stw fired")
+    def mcb_wE(self):
+        print("- Coral-Bleaching-wE fired")
+        print( RuleRef('w'), RuleRef('e'))
 
-##Ecoforecast Rule #16: Coral-Bleaching-Tl
+##Ecoforecast Rule #16: Coral-Bleaching-PS
 ##Description: Mass coral bleaching (very high SST + very high light)
     @Rule(parsurf(fuzzyI=L('vHigh') | L('dHigh')),
             parsurf(fuzzyTod=L('midd') | L('dayl') | L('all')),
             sst(fuzzyI=L('vHigh') | L('dHigh')),
             sst(fuzzyTod=W()))
-    def mcb_Tl(self):
-        print("Coral-Bleaching-Tl fired")
+    def mcb_PS(self):
+        print("- Coral-Bleaching-PS fired")
+        print( RuleRef('p'), RuleRef('s'))
 
-##Ecoforecast Rule #17: Coral-Bleaching-Tw
+##Ecoforecast Rule #17: Coral-Bleaching-wS
 ##Description: Mass coral bleaching (very high SST + very low wind)
     @Rule(windsp(fuzzyI=L('dLow') | L('vLow')),
             windsp(fuzzyTod=L('morn') | L('midd') | L('psun') | L('dayl') | L('dayb') | L('aftn') | L('all')),
             sst(fuzzyI=L('vHigh') | L('dHigh')),
             sst(fuzzyTod=W()))
-    def mcb_Tw(self):
-        print("Coral-Bleaching-Tw fired")
+    def mcb_wS(self):
+        print("- Coral-Bleaching-wS fired")
+        print( RuleRef('w'), RuleRef('s'))
 
 ##Ecoforecast Rule #18: Coral-Bleaching-B
 ##Description: Mass coral bleaching (Berkelmans bleaching curve)
     @Rule(curveB(fuzzyI=L('Conductive') | L('vConductive')),
             curveB(fuzzyTod=W()))
     def mcb_B(self):
-        print("Coral-Bleaching-B fired")
+        print("- Coral-Bleaching-B fired")
+        print( RuleRef('b'))
 
-##Ecoforecast Rule #19: Coral-Bleaching-It
+##Ecoforecast Rule #19: Coral-Bleaching-A
 ##Description: Mass coral bleaching (drastic high in-situ sea temperature)
     @Rule(seandbc(fuzzyI=L('dHigh')),
             seandbc(fuzzyTod=W()))
-    def mcb_It(self):
-        print("Coral-Bleaching-It fired")
+    def mcb_A(self):
+        print("- Coral-Bleaching-A fired")
+        print( RuleRef('a'))
 
-##Ecoforecast Rule #20: Coral-Bleaching-Mort
+##Ecoforecast Rule #20: Coral-Bleaching-BB
 ##Description: Mass coral mortality (>50%) for local sensitive species (Berkelmans)
     @Rule(curveB(fuzzyI=L('Mortality') | L('hMortality')),
             curveB(fuzzyTod=W()))
-    def mcb_Mort(self):
-        print("Coral-Bleaching-Mort fired")
+    def mcb_BB(self):
+        print("- Coral-Bleaching-BB fired")
+        print( RuleRef('b'))
 
-##Ecoforecast Rule #21: Coral-Bleaching-Mst
+##Ecoforecast Rule #21: Coral-Bleaching-EM
 ##Description: Mass coral bleaching (high monthly mean 'shallow' sea temperature)
     @Rule(sea1mM(fuzzyI=L('High') | L('vHigh') | L('dHigh')),
             sea1mM(fuzzyTod=W()))
-    def mcb_Mst(self):
-        print("Coral-Bleaching-Mst fired")
+    def mcb_EM(self):
+        print("- Coral-Bleaching-EM fired")
+        print( RuleRef('eM'))
 
-##Ecoforecast Rule #22: Coral-Bleaching-Mwt
+##Ecoforecast Rule #22: Coral-Bleaching-AM
 ##Description: Mass coral bleaching (high monthly mean in situ sea temperature)
     @Rule(seandbcM(fuzzyI=L('High') | L('vHigh') | L('dHigh')),
             seandbcM(fuzzyTod=W()))
-    def mcb_Mwt(self):
-        print("Coral-Bleaching-Mwt fired")
+    def mcb_AM(self):
+        print("- Coral-Bleaching-AM fired")
+        print( RuleRef('aM'))
 
-##Ecoforecast Rule #23: Coral-Bleaching-St
+##Ecoforecast Rule #23: Coral-Bleaching-E
 ##Description: Mass coral bleaching (drastic high 'shallow' sea temperature)
     @Rule(sea1m(fuzzyI=L('dHigh')),
             sea1m(fuzzyTod=W()))
-    def mcb_St(self):
-        print("Coral-Bleaching-St fired")
+    def mcb_E(self):
+        print("- Coral-Bleaching-E fired")
+        print( RuleRef('e'))
 
-##Ecoforecast Rule #24: Coral-Bleaching-T
+##Ecoforecast Rule #24: Coral-Bleaching-S
 ##Description: Mass coral bleaching (drastic high SST)
     @Rule(sst(fuzzyI=L('dHigh')),
             sst(fuzzyTod=W()))
-    def mcb_T(self):
-        print("Coral-Bleaching-T fired")
+    def mcb_S(self):
+        print("- Coral-Bleaching-S fired")
+        print( RuleRef('s'))
 
 
