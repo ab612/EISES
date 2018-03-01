@@ -9,68 +9,70 @@ import pytest
 @pytest.fixture(scope="session", autouse=True)
 def declared_engine():
     """Returns knowledge engine that has been initially reset"""
-    print('\n    declared_engine(): ')
+    print('\n____declared_engine(): ')
     e = mcb.MCB()
     yield e
-    print('\n    tear down engine')
+    print('\n____tear down engine')
 
-@pytest.fixture(scope="class")
-def reset_engine(declared_engine, request):
-    """Resets knowledge engine once per declared scope"""
-    print('\n    reset_engine(declared_engine): ')
-    declared_engine.reset()
-#    return request.param
-
-@pytest.fixture(scope = 'class')
-def psetup(request):
+@pytest.fixture(scope = 'class', params = [1,2,])
+def psetup(declared_engine, request):
     """Passes parameters into test classes"""
-    print('\n    passing parameters')
-    
-    #initializing
-    test1names = ('sst', 'seandbc', 'parsurf', 'windsp', 'tide1m', 'sea1m',
-        'seandbcM', 'windsp3day', 'sea1mM', 'curveB')
-    test2names = ('parsurf', 'windsp', 'sst', 'tide1m', 'seandbc', 'sea1m',
-        'seandbc', 'sea1m', 'seandbcM', 'windsp3day', 'curveB', 'sea1mM')
-    parameterdata = [
-        ("./fact_CSVs/test1.csv", test1names),
-        ("./fact_CSVs/test2.csv", test2names),
-            ]
+    print('\n____reset engine')
+    declared_engine.reset()
 
-#create everything for instance
+
+    print('\n____passing parameters')
+
+    #initializing
+    if(request.param == 1):
+        testnames = ('sst', 'seandbc', 'parsurf', 'windsp', 'tide1m', 'sea1m',
+            'seandbcM', 'windsp3day', 'sea1mM', 'curveB')
+        filename = "./fact_CSVs/test1.csv"
+        rulesfiredorder = ('unbelivale_seandbcM', 'unbelivable_seandbc')
+
+    if(request.param == 2):
+        testnames = ('parsurf', 'windsp', 'sst', 'tide1m', 'seandbc', 'sea1m', 'seandbcM', 'windsp3day', 'curveB', 'sea1mM')
+        filename = "./fact_CSVs/test2.csv"
+        rulesfiredorder = ('unbelivable_curveB', 'unbelivable_windsp3day', 'mcb_AM', 'unbelivable_seandbc', 'mcb_PwS')
+
+    #create everything for instance
 
     #inject class variables
-    request.cls.parameterdata = parameterdata
+    request.cls.testnames = testnames
+    request.cls.filename = filename
+    request.cls.rulesfiredorder = rulesfiredorder
     yield
-
-#delete everything for instance
-
+    #delete everything for instance
 
 
+#@pytest.mark.parametrize("i", [ (0), (1), ] )
 @pytest.mark.usefixtures( 'declared_engine', 'psetup')
-#@pytest.mark.parametrize("filename, factnames", [ ("./fact_CSVs/test1.csv"),
-#    ("./fact_CSVs/test2.csv") ] )
 class Test1:
 
     def test_fact_init_order( self, declared_engine, psetup):
-        print('\n    test_fact_init_order(declared_engine): ')
-        declared_engine.import_facts( self.parameterdata[0][0])
-        assert  (declared_engine.facts[0].__class__ == mcb.fact.InitialFact) and\
-                (declared_engine.facts[1].__class__.__name__ == self.parameterdata[0][1][0]) and\
-                (declared_engine.facts[2].__class__.__name__ == 'seandbc') and\
-                (declared_engine.facts[3].__class__.__name__ == 'parsurf') and\
-                (declared_engine.facts[4].__class__.__name__ == 'windsp') and\
-                (declared_engine.facts[5].__class__.__name__ == 'tide1m') and\
-                (declared_engine.facts[6].__class__.__name__ == 'sea1m') and\
-                (declared_engine.facts[7].__class__.__name__ == 'seandbcM') and\
-                (declared_engine.facts[8].__class__.__name__ == 'windsp3day') and\
-                (declared_engine.facts[9].__class__.__name__ == 'sea1mM') and\
-                (declared_engine.facts[10].__class__.__name__ == 'curveB') and\
-                (declared_engine.facts.last_index == 11)
+        print('\n____test_fact_init_order(declared_engine): ')
+        declared_engine.import_facts( self.filename)
+        assert (declared_engine.facts[0].__class__ == mcb.fact.InitialFact)
+        assert (declared_engine.facts[1].__class__.__name__ == self.testnames[0]) 
+        assert (declared_engine.facts[2].__class__.__name__ == self.testnames[1])
+        assert (declared_engine.facts[3].__class__.__name__ == self.testnames[2])
+        assert (declared_engine.facts[4].__class__.__name__ == self.testnames[3])
+        assert (declared_engine.facts[5].__class__.__name__ == self.testnames[4])
+        assert (declared_engine.facts[6].__class__.__name__ == self.testnames[5])
+        assert (declared_engine.facts[7].__class__.__name__ == self.testnames[6])
+        assert (declared_engine.facts[8].__class__.__name__ == self.testnames[7])
+        assert (declared_engine.facts[9].__class__.__name__ == self.testnames[8])
+        assert (declared_engine.facts[10].__class__.__name__ == self.testnames[9])
+        assert (declared_engine.facts.last_index == 11)
 
-    def test_function_output(self, declared_engine):
-        print('\n    test1_function_output(): ')
-        # a = self.agenda.activations
-        # len(a)
-        # a[0].rule.__name_
-        assert 1 == 1
+    def test_function_output(self, declared_engine, psetup):
+        print("\n____running declared_engine")
+        #declared_engine.run()
+        print('\n____finding consequents')
+        consequents = declared_engine.agenda.activations
+        numConsequents = len(consequents)
+        i = 0 
+        if (i <  numConsequents):
+            assert consequents[i].rule.__name__ == self.rulesfiredorder[i]
+            i = i +1
 

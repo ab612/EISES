@@ -1,6 +1,6 @@
 ###mcb Ecoforecast prototype goal is to implement rules base from http://ecoforecast.coral.noaa.gov/index/0/MLRF1/model-detail&name=MASS-CORAL-BLEACHING and 'print' a forecast###
 __author__ = "Madison Soden"
-__date__ = "Tue Jan 30 11:12:24 2018"
+__date__ = "Tue Feb 27 11:34:48 2018"
 __license__ = "NA?"
 __version__ = "mcb"
 __email__ = "madison.soden@gmail.com"
@@ -145,11 +145,12 @@ class MCB(KnowledgeEngine):
         To run Knowledge Engine call:
         >> e.run()
         ----------------------------------------------------------------------
-         \n \n \n""")
+         \n  \n \n""")
 
 #function to pipe pyknow e.fact output into something legible
+    
     def print_facts(self):
-## messy parsing of giantstring'
+    ## messy parsing of giantstring'
         giantstring = self.facts.__str__()
         giantstring = giantstring.strip('<f-')
         giantstring = giantstring.rstrip(')')
@@ -185,7 +186,7 @@ class MCB(KnowledgeEngine):
             factlist = [key, factname, rRangeAtt, todAtt, dateAtt, locusAtt]
             printlist.append(factlist)
 
-##formatting printlist using Texttable library
+    ##formatting printlist using Texttable library
         table = tt.Texttable()
         headings = ['Key', 'Fact', 'fuzzyI', 'fuzzyTod', 'Date', 'Locus']
         table.header(headings)
@@ -194,15 +195,16 @@ class MCB(KnowledgeEngine):
         s = table.draw()
         print(s)
 
+
 #test functions to initialize specific combinations of facts
-    def import_facts(self, filenum='1'):
-        filename = './test_suite/fact_CSVs/test' + filenum +'.csv'
+    def import_facts(self, filename='1'):
+#       filename = './test_suite/fact_CSVs/test' + filenum +'.csv'
         factlines= [x.rstrip('\n') for x in open(filename)]
         while factlines:
             factString = factlines.pop(0)
             factName, factFuzzyI, factFuzzyTod, factDate, factLocus = factString.split(",")
-            print("DECLARED: ", factName, " ", factFuzzyI, " ", factFuzzyTod, " ",
-                    factDate, " ", factLocus, "\n")
+           # print("DECLARED: ", factName, " ", factFuzzyI, " ", factFuzzyTod, " ",
+           #         factDate, " ", factLocus, "\n")
             exec("self.declare(%s(fuzzyI=factFuzzyI, fuzzyTod=factFuzzyTod, date=factDate, locus=factLocus))" % (factName))
 
 #function to automate declaring facts: has a function call mode w/ attributes
