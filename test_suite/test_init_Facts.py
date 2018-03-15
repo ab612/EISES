@@ -14,10 +14,10 @@ def declared_engine():
     yield e
     print('\n____tear down engine')
 
-@pytest.fixture(scope = 'class', params = [1,2,])
+@pytest.fixture(scope = 'class', params = [1,2,3,])
 def psetup(declared_engine, request):
     """Passes parameters into test classes"""
-    print('\n____reset engine')
+    print('\n_+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++reset engine++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
     declared_engine.reset()
 
 
@@ -28,12 +28,17 @@ def psetup(declared_engine, request):
         testnames = ('sst', 'seandbc', 'parsurf', 'windsp', 'tide1m', 'sea1m',
             'seandbcM', 'windsp3day', 'sea1mM', 'curveB')
         filename = "./fact_CSVs/test1.csv"
-        rulesfiredorder = ('unbelivale_seandbcM', 'unbelivable_seandbc')
+        rulesfiredorder = ('u_fI_seandbcM', 'u_fI_seandbc')
 
     if(request.param == 2):
         testnames = ('parsurf', 'windsp', 'sst', 'tide1m', 'seandbc', 'sea1m', 'seandbcM', 'windsp3day', 'curveB', 'sea1mM')
         filename = "./fact_CSVs/test2.csv"
-        rulesfiredorder = ('unbelivable_curveB', 'unbelivable_windsp3day', 'mcb_AM', 'unbelivable_seandbc', 'mcb_PwS')
+        rulesfiredorder = ( 'u_fI_curveB', 'u_fI_windsp3day', 'mcb_AM', 'u_fI_seandbc', 'mcb_PwS')
+
+    if(request.param == 3):
+        testnames = ('parsurf', 'windsp', 'sst', 'tide1m', 'seandbc', 'sea1m', 'seandbcM', 'windsp3day', 'curveB', 'sea1mM')
+        filename = "./fact_CSVs/test3.csv"
+        rulesfiredorder = ('u_fI_curveB', 'mcb_AM', 'mcb_PwS', 'm_fI_sea1m', 'm_fI_seandbc')
 
     #create everything for instance
 
@@ -75,4 +80,6 @@ class Test1:
         if (i <  numConsequents):
             assert consequents[i].rule.__name__ == self.rulesfiredorder[i]
             i = i +1
+        print('____running engine')
+        declared_engine.run()
 

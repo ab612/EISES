@@ -49,17 +49,17 @@ import texttable as tt
 
 def RuleRef( index):
     ruleDict = {
-        'p': '    p    -    parsurf',
-        's': '    s    -    sst',
-        'w': '    w    -    windsp',
-        't': '    t    -    tide1m',
-        'a': '    a    -    seandbc',
-        'e': '    e    -    sea1m',
-        'b': '    b    -    curveB',
-        'eM': '    eM    -    sea1mM',
-        'aM': '    aM    -    seandbcM',
-        'w3': '    w3    -    windsp3day'}
-    return ruleDict.get( index, "incorrect input")
+        'p': '    p    -    parsurf\n',
+        's': '    s    -    sst\n',
+        'w': '    w    -    windsp\n',
+        't': '    t    -    tide1m\n',
+        'a': '    a    -    seandbc\n',
+        'e': '    e    -    sea1m\n',
+        'b': '    b    -    curveB\n',
+        'eM': '    eM    -    sea1mM\n',
+        'aM': '    aM    -    seandbcM\n',
+        'w3': '    w3    -    windsp3day\n'}
+    return ruleDict.get( index, "incorrect input\n")
 
 ###Helper functions###
 def anyof(*values):
@@ -222,89 +222,89 @@ class MCB(KnowledgeEngine):
 ###RULE DECLARATIONS###
 #Unbelievable value Rules
     @Rule(OR(sst(fuzzyI='uLow'), sst(fuzzyI='uHigh')))
-    def unbelievable_sst(self):
+    def u_fI_sst(self):
         print("sst values in unbelievable range")
 
     @Rule(OR(windsp(fuzzyI='uLow'), windsp(fuzzyI='uHigh')))
-    def unbelivable_windsp(self):
+    def u_fI_windsp(self):
         print("wind scalar values in unbelievable range")
 
     @Rule(OR(seandbc(fuzzyI='uLow'), seandbc(fuzzyI='uHigh')))
-    def unbelivable_seandbc(self):
+    def u_fI_seandbc(self):
         print("seandbc values in unbelievable range")
 
     @Rule(OR(parsurf(fuzzyI='uLow'), parsurf(fuzzyI='uHigh')))
-    def unbelivable_parsurf(self):
+    def u_fI_parsurf(self):
         print("parsurf values in unbelievable range")
 
     @Rule(OR(tide1m(fuzzyI='uLow'), tide1m(fuzzyI='uHigh')))
-    def unbelivable_tide1m(self):
+    def u_fI_tide1m(self):
         print("tide1m values in unbelievable range")
 
     @Rule(OR(sea1m(fuzzyI='uLow'), sea1m(fuzzyI='uHigh')))
-    def unbelivalbe_sea1m(self):
+    def u_fI_sea1m(self):
         print("sea1m values in unbelievable range")
 
     @Rule(OR(seandbcM(fuzzyI='uLow'), seandbcM(fuzzyI='uHigh')))
-    def unbelivale_seandbcM(self):
+    def u_fI_seandbcM(self):
         print("seandbcM values in unbelievable range")
 
     @Rule(OR(windsp3day(fuzzyI='uLow'), windsp3day(fuzzyI='uHigh')))
-    def unbelivable_windsp3day(self):
+    def u_fI_windsp3day(self):
         print("windsp3day values in unbelievable range")
 
     @Rule(OR(sea1mM(fuzzyI='uLow'), sea1mM(fuzzyI='uHigh')))
-    def unbelivable_sea1mM(self):
+    def u_fI_sea1mM(self):
         print("sea1mM values in unbelievable range")
 
     @Rule(OR(curveB(fuzzyI='uLow'), curveB(fuzzyI='uHigh')))
-    def unbelivable_curveB(self):
+    def u_fI_curveB(self):
         print("curveB values in unbelievable range")
 
 #Missing info rules
     @Rule(NOT(sst(fuzzyI= anyof('uLow', 'dLow', 'vLow', 'Low', 'sLow',
         'average', 'sHigh', 'High', 'vHigh', 'dHigh', 'uHigh'))))
-    def missing_fI_sst(self):
+    def m_fI_sst(self):
         print("missing or unreadable value for sst fuzzyI")
 
     @Rule(NOT(seandbc(fuzzyI= anyof('uLow', 'dLow', 'vLow', 'Low', 'sLow',
         'average', 'sHigh', 'High', 'vHigh', 'dHigh', 'uHigh'))))
-    def missing_fI_seandbc(self):
+    def m_fI_seandbc(self):
         print("missing or unreadable value for seandbc fuzzyI")
 
     @Rule(NOT(parsurf(fuzzyI= anyof('uLow', 'dLow', 'vLow', 'Low', 'sLow',
         'average', 'sHigh', 'High', 'vHigh', 'dHigh', 'uHigh'))))
-    def missing_fI_parsurf(self):
+    def m_fI_parsurf(self):
         print("missing or unreadable value for parsurf fuzzyI")
 
     @Rule(NOT(windsp(fuzzyI= anyof('uLow', 'dLow', 'vLow', 'Low', 'sLow',
         'average', 'sHigh', 'High', 'vHigh', 'dHigh', 'uHigh'))))
-    def missing_fI_windsp(self):
+    def m_fI_windsp(self):
         print("missing or unreadable value for windsp fuzzyI")
 
     @Rule(NOT(tide1m(fuzzyI= anyof('uLow', 'dLow', 'vLow', 'Low', 'sLow',
         'average', 'sHigh', 'High', 'vHigh', 'dHigh', 'uHigh'))))
-    def missing_fI_tide1m(self):
+    def m_fI_tide1m(self):
         print("missing or unreadable value for tide1m fuzzyI")
 
     @Rule(NOT(sea1m(fuzzyI= anyof('uLow', 'dLow', 'vLow', 'Low', 'sLow',
         'average', 'sHigh', 'High', 'vHigh', 'dHigh', 'uHigh'))))
-    def missing_fI_sea1m(self):
+    def m_fI_sea1m(self):
         print("missing or unreadable value for sea1m fuzzyI")
 
     @Rule(NOT(seandbcM(fuzzyI= anyof('uLow', 'dLow', 'vLow', 'Low', 'sLow',
         'average', 'sHigh', 'High', 'vHigh', 'dHigh', 'uHigh'))))
-    def missing_fI_seandbcM(self):
+    def m_fI_seandbcM(self):
         print("missing or unreadable value for seandbcM fuzzyI")
 
     @Rule(NOT(curveB(fuzzyI= anyof('uLow', 'dLow','vLow', 'Low', 'sLow',
         'average', 'sHigh', 'High', 'vHigh' ,'dHigh', 'uHigh'))))
-    def missing_fI_curveB(self):
+    def m_fI_curveB(self):
         print("missing or unreadable value for curveB fuzzyI")
 
     @Rule(NOT(sea1mM(fuzzyI= anyof('uLow', 'dLow', 'vLow', 'Low', 'sLow',
         'average', 'sHigh', 'High', 'vHigh', 'dHigh', 'uHigh'))))
-    def missing_fI_sea1mM(self):
+    def m_fI_sea1mM(self):
         print("missing or unreadable value for sea1mM fuzzyI")
 
 
@@ -325,7 +325,7 @@ class MCB(KnowledgeEngine):
             seandbc(fuzzyTod=W()))
     def mcb_PtwA(self):
         print("- Coral-Bleaching-PtwA fired")
-        print( RuleRef('p'), RuleRef('t'), RuleRef('w'),
+        print(' ', RuleRef('p'), RuleRef('t'), RuleRef('w'),
                 RuleRef('a'))
 
 ##Ecoforecast Rule #2: Coral-Bleaching-PtwE
@@ -342,7 +342,7 @@ class MCB(KnowledgeEngine):
             sea1m(fuzzyTod=W()))
     def mcb_PtwE(self):
         print("- Coral-Bleaching-PtwE fired")
-        print( RuleRef('p'),  RuleRef('t'), RuleRef('w'),
+        print(' ', RuleRef('p'),  RuleRef('t'), RuleRef('w'),
                 RuleRef('e'))
 
 ##Ecoforecast Rule #3: Coral-Bleaching-PtwS
@@ -357,7 +357,7 @@ class MCB(KnowledgeEngine):
             sst(fuzzyTod=W()))
     def mcb_PtwS(self):
         print("- Coral-Bleaching-Tlwt fired")
-        print( RuleRef('t'), RuleRef('l'), RuleRef('w'),
+        print(' ', RuleRef('t'), RuleRef('l'), RuleRef('w'),
                 RuleRef('t'))
 
 ##Ecoforecast Rule #4: Coral-Bleaching-PwA
@@ -370,7 +370,7 @@ class MCB(KnowledgeEngine):
             seandbc(fuzzyTod=W()))
     def mcb_PwA(self):
         print("- Coral-Bleaching-PwA fired")
-        print( RuleRef('p'), RuleRef('w'), RuleRef('a'))
+        print(' ', RuleRef('p'), RuleRef('w'), RuleRef('a'))
 
 ##Ecoforecast Rule #5: Coral-Bleaching-twA
 ##Description: Mass coral bleaching (high in-situ sea temperature + low wind + low tide)
@@ -382,7 +382,7 @@ class MCB(KnowledgeEngine):
             seandbc(fuzzyTod=W()))
     def mcb_twA(self):
         print("- Coral-Bleaching-twA")
-        print( RuleRef('t'), RuleRef('w'), RuleRef('a'))
+        print(' ', RuleRef('t'), RuleRef('w'), RuleRef('a'))
 
 ##Ecoforecast Rule #6: Coral-Bleaching-PwE
 ##Description: Mass coral bleaching (high 'shallow' sea temperature + high light + low wind)
@@ -394,7 +394,7 @@ class MCB(KnowledgeEngine):
             sea1m(fuzzyTod=W()))
     def mcb_PwE(self):
         print("- Coral-Bleaching-PwE fired")
-        print( RuleRef('p'), RuleRef('w'), RuleRef('e'))
+        print(' ', RuleRef('p'), RuleRef('w'), RuleRef('e'))
 
 ##Ecoforecast Rule #7: Coral-Bleaching-twE
 ##Description: Mass coral bleaching (high 'shallow' sea temperature + low wind + low tide)
@@ -406,7 +406,7 @@ class MCB(KnowledgeEngine):
             sea1m(fuzzyTod=W()))
     def mcb_twE(self):
         print("- Coral-Bleaching-twE fired")
-        print( RuleRef('t'), RuleRef('w'), RuleRef('e'))
+        print(' ', RuleRef('t'), RuleRef('w'), RuleRef('e'))
 
 
 ##Ecoforecast Rule #8: Coral-Bleaching-PwS
@@ -419,7 +419,7 @@ class MCB(KnowledgeEngine):
             sst(fuzzyTod=W()))
     def mcb_PwS(self):
         print("- Coral-Bleaching-PwS fired")
-        print( RuleRef('p'), RuleRef('w'), RuleRef('s'))
+        print(' ', RuleRef('p'), RuleRef('w'), RuleRef('s'))
 
 ##Ecoforecast Rule #9: Coral-Bleaching-twS
 ##Description: Mass coral bleaching (high SST + low wind + low tide)
@@ -431,7 +431,7 @@ class MCB(KnowledgeEngine):
             sst(fuzzyTod=W()))
     def mcb_twS(self):
         print("- Coral-Bleaching-twS fired")
-        print( RuleRef('t'), RuleRef('w'), RuleRef('s'))
+        print(' ', RuleRef('t'), RuleRef('w'), RuleRef('s'))
 
 ##Ecoforecast Rule #10: Coral-Bleaching-w3A
 ##Description: Mass coral bleaching (high in-situ sea temperature + doldrums)
@@ -441,7 +441,7 @@ class MCB(KnowledgeEngine):
             seandbc(fuzzyTod=W()))
     def mcb_w3A(self):
         print("- Coral-Bleaching-w3A fired")
-        print( RuleRef('w3'), RuleRef('a'))
+        print(' ', RuleRef('w3'), RuleRef('a'))
 
 ##Ecoforecast Rule #11: Coral-Bleaching-PA
 ##Description: Mass coral bleaching (very high in-situ sea temperature + very high light)
@@ -451,7 +451,7 @@ class MCB(KnowledgeEngine):
             seandbc(fuzzyTod=W()))
     def mcb_PA(self):
         print("- Coral-Bleaching-PA fired")
-        print( RuleRef('p'), RuleRef('a'))
+        print(' ', RuleRef('p'), RuleRef('a'))
 
 ##Ecoforecast Rule #12: Coral-Bleaching-wA
 ##Description: Mass coral bleaching (very high in-situ sea temperature + very low wind)
@@ -461,7 +461,7 @@ class MCB(KnowledgeEngine):
             seandbc(fuzzyTod=W()))
     def mcb_wA(self):
         print("- Coral-Bleaching-wA fired")
-        print( RuleRef('w'), RuleRef('a'))
+        print( ' ',RuleRef('w'), RuleRef('a'))
 
 ##Ecoforecast Rule #13: Coral-Bleaching-w3E
 ##Description: Mass coral bleaching (high 'shallow' sea temperature + doldrums)
@@ -471,7 +471,7 @@ class MCB(KnowledgeEngine):
             sea1m(fuzzyTod=W()))
     def mcb_w3E(self):
         print("- Coral-Bleaching-w3E fired")
-        print( RuleRef('w3'), RuleRef('e'))
+        print(' ', RuleRef('w3'), RuleRef('e'))
 
 ##Ecoforecast Rule #14: Coral-Bleaching-PE
 ##Description: Mass coral bleaching (very high 'shallow' sea temperature + very high light)
@@ -481,7 +481,7 @@ class MCB(KnowledgeEngine):
             sea1m(fuzzyTod=W()))
     def mcb_PE(self):
         print("- Coral-Bleaching-PE fired")
-        print( RuleRef('p'), RuleRef('e'))
+        print(' ', RuleRef('p'), RuleRef('e'))
 
 ##Ecoforecast Rule #15: Coral-Bleaching-wE
 ##Description: Mass coral bleaching (very high 'shallow' sea temperature + very low wind)
@@ -491,7 +491,7 @@ class MCB(KnowledgeEngine):
             sea1m(fuzzyTod=W()))
     def mcb_wE(self):
         print("- Coral-Bleaching-wE fired")
-        print( RuleRef('w'), RuleRef('e'))
+        print(' ', RuleRef('w'), RuleRef('e'))
 
 ##Ecoforecast Rule #16: Coral-Bleaching-PS
 ##Description: Mass coral bleaching (very high SST + very high light)
@@ -501,7 +501,7 @@ class MCB(KnowledgeEngine):
             sst(fuzzyTod=W()))
     def mcb_PS(self):
         print("- Coral-Bleaching-PS fired")
-        print( RuleRef('p'), RuleRef('s'))
+        print(' ', RuleRef('p'), RuleRef('s'))
 
 ##Ecoforecast Rule #17: Coral-Bleaching-wS
 ##Description: Mass coral bleaching (very high SST + very low wind)
@@ -511,7 +511,7 @@ class MCB(KnowledgeEngine):
             sst(fuzzyTod=W()))
     def mcb_wS(self):
         print("- Coral-Bleaching-wS fired")
-        print( RuleRef('w'), RuleRef('s'))
+        print(' ', RuleRef('w'), RuleRef('s'))
 
 ##Ecoforecast Rule #18: Coral-Bleaching-B
 ##Description: Mass coral bleaching (Berkelmans bleaching curve)
@@ -519,7 +519,7 @@ class MCB(KnowledgeEngine):
             curveB(fuzzyTod=W()))
     def mcb_B(self):
         print("- Coral-Bleaching-B fired")
-        print( RuleRef('b'))
+        print(' ', RuleRef('b'))
 
 ##Ecoforecast Rule #19: Coral-Bleaching-A
 ##Description: Mass coral bleaching (drastic high in-situ sea temperature)
@@ -527,7 +527,7 @@ class MCB(KnowledgeEngine):
             seandbc(fuzzyTod=W()))
     def mcb_A(self):
         print("- Coral-Bleaching-A fired")
-        print( RuleRef('a'))
+        print(' ', RuleRef('a'))
 
 ##Ecoforecast Rule #20: Coral-Bleaching-BB
 ##Description: Mass coral mortality (>50%) for local sensitive species (Berkelmans)
@@ -535,7 +535,7 @@ class MCB(KnowledgeEngine):
             curveB(fuzzyTod=W()))
     def mcb_BB(self):
         print("- Coral-Bleaching-BB fired")
-        print( RuleRef('b'))
+        print(' ', RuleRef('b'))
 
 ##Ecoforecast Rule #21: Coral-Bleaching-EM
 ##Description: Mass coral bleaching (high monthly mean 'shallow' sea temperature)
@@ -543,7 +543,7 @@ class MCB(KnowledgeEngine):
             sea1mM(fuzzyTod=W()))
     def mcb_EM(self):
         print("- Coral-Bleaching-EM fired")
-        print( RuleRef('eM'))
+        print(' ', RuleRef('eM'))
 
 ##Ecoforecast Rule #22: Coral-Bleaching-AM
 ##Description: Mass coral bleaching (high monthly mean in situ sea temperature)
@@ -551,7 +551,7 @@ class MCB(KnowledgeEngine):
             seandbcM(fuzzyTod=W()))
     def mcb_AM(self):
         print("- Coral-Bleaching-AM fired")
-        print( RuleRef('aM'))
+        print(' ', RuleRef('aM'))
 
 ##Ecoforecast Rule #23: Coral-Bleaching-E
 ##Description: Mass coral bleaching (drastic high 'shallow' sea temperature)
@@ -559,7 +559,7 @@ class MCB(KnowledgeEngine):
             sea1m(fuzzyTod=W()))
     def mcb_E(self):
         print("- Coral-Bleaching-E fired")
-        print( RuleRef('e'))
+        print( ' ',RuleRef('e'))
 
 ##Ecoforecast Rule #24: Coral-Bleaching-S
 ##Description: Mass coral bleaching (drastic high SST)
@@ -567,6 +567,6 @@ class MCB(KnowledgeEngine):
             sst(fuzzyTod=W()))
     def mcb_S(self):
         print("- Coral-Bleaching-S fired")
-        print( RuleRef('s'))
+        print(' ', RuleRef('s'))
 
 
