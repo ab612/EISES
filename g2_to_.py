@@ -8,6 +8,7 @@ __status__ = "Production"
 
 import datetime as dt
 import pickle as p
+import csv
 ###SAMPLE FACT
 #(mlrf1 sat-chlor_a 0 23 low all-day of day 169 year 2017)
 
@@ -22,7 +23,7 @@ def locusID(location):
     return locusDict[location]
 
 def nameID(factname):
-    nameDict= {
+    nameDict= { 
             'windsp': 'windsp',
             'winddir': 'winddr',
             'seandbc': 'seandbc',
@@ -51,7 +52,7 @@ def SRIID(SRI):
     return SRI
 
 def fuzzyIID(fuzzyI):
-    fuzzyIDict = {
+    fuzzyIDict =  {
             'average': 'average',
             'very-low': 'vLow',
             'somewhat-low': 'sLow',
@@ -161,4 +162,22 @@ def parse(filename= "./test_suite/MLRF_G2FACTS.bb", output = 'CSV'):
 
     else :
         raise MyException("Not a supported output type")
+
+def divide(filename= "./test_suite/MLRF_G2FACTS.csv", output = "CSV"):
+    datedict = {}
+    with open(filename, newline='') as f:
+        factdata = csv.reader(f, delimiter = ',', quotechar='|')
+        for row in factdata:
+            if row[3] in datedict:
+                datedict[row[3]].append(row)
+            else:
+                datedict[row[3]] = []
+                datedict[row[3]].append(row)
+    for key in list(datedict):
+        with open("./test_suite/fact_CSVs/"+key+'.csv', 'w+', newline='') as f1:
+            writer = csv.writer(f1, delimiter= ',', quotechar='|',
+                    quoting=csv.QUOTE_MINIMAL)
+            for row in datedict[key]:
+                writer.writerow(row)
+
 
