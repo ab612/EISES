@@ -169,7 +169,7 @@ def divide(filename= "./test_suite/MLRF_G2FACTS.csv", output = "CSV"):
         factdata = csv.reader(f, delimiter = ',', quotechar='|')
         for row in factdata:
             if row[3] in datedict:
-                datedict[row[3]].append(row)
+                datedict[row[]].append(row)
             else:
                 datedict[row[3]] = []
                 datedict[row[3]].append(row)
