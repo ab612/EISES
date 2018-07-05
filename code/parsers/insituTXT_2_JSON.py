@@ -48,5 +48,11 @@ df= df.append(df1)
 jsondf=df.to_json(orient='split')
 
 with open('../../data/mlrf1_insitu_data/'+filename+'.json', 'w') as f:
-     json.dump(jsondf, f)
+#    json.dump(jsondf, f)
+    f.write(jsondf)
 
+#TO READ JSON string file
+#>>import pandas as pd
+#>>import json
+#>>jsonstring = open("filename.json", 'r').read()
+#>>df= pd.read_json(jsonstring, orient='split')
