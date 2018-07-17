@@ -1,8 +1,9 @@
 ### ffmcb.py is a prototype fact factory implementation, meant to help provide an
 #       example for a future, inherited fact factory implementation that would apply to
 #       any ecoforecast. Not just MCB for MLRF1
+
+##Last modified: Tue Jul 17, 2018  04:04PM
 __author__ = "Madison.Soden" 
-__date__ = "Tue Jul  3 11:16:39 2018"
 __license__ = "NA?"
 __version__ = "mcb"
 __email__ = "madison.soden@gmail.com"
@@ -11,77 +12,136 @@ __status__ = "Production"
 import pyknow as pk
 import pandas as pd
 import json
+import csv
+import rangedict as rdi
+import os.path
 
-###Fact Definition Documentation###
-#fact names are declared as 'parsurf', 'sst', 'windsp', 'tide1m',
-#'seandbc', 'sea1m', 'curveB', 'sea1mM', 'seandbcM', 'windsp3day'
+filename= 'mlrf1h2017'
 
-#fuzzyI is a string containing a fuzzy (i.e. proxy) values for sst
-#key = 'fuzzyI' /
-#fuzzy values can be 'uLow', 'dLow', 'vLow', 'Low', 'sLow', 'average', 'sHigh',
-#'High', 'vHigh', 'dHigh', 'uHigh'$
-#fuzzyTod is a string indicating a fuzzy time of day values for the-
-#time fuzzyI was recorded Taken in eight 3 hour, then four 6 hour, then 
-#two 12 hour , and one 24 hour time increments
-#key = 'fuzzyTod' and/or 1
-#fuzzy values can be
-# 'evening' - 'even' - 0000 to 0300
-#'midnight' - 'midn' - 0300 to 0600
-#'pre-dawn' - 'pdaw' - 0600 to 0900
-#'dawn' - 'dawn' - 0900 to 1200
-# 'morning' - 'morn' - 1200 to 1500
-#'mid-day' -'midd'-1500 to 1800
-#'pre-sunset' - 'psun' - 2100 to 2400
-#'sunset' - 'suns' - 2100 to 2400
-#
-# 'night-hours' - 'nite' - 0000 to 0900
-# 'dawn-morning' - 'dayb' - 0900 to 1500
-# 'afternoon' - 'aftn' - 1800 to 2400
-# 'daylight-hours' - 'dayl' - 0900 to 2400
-# 'all-day' - 'all' - 0300 to 0300
+def data2function( index):
+    dataDict= {
+            'WDIR': winddirGen,
+            'WSPD': windspGen,
+            'GST': windguGen,
+            'WVHT': 'NA',
+            'DPD': 'NA',
+            'APD': 'NA',
+            'MWD': 'NA',
+            'PRES': baromGen,
+            'ATMP': airtGen,
+            'WTMP': seandbcGen,
+            'DEWP': 'NA',
+            'VIS': 'NA', 
+            'TIDE': 'NA',
+            'ATMPM': 'NA',
+            'WTMPM': 'NA'}
+    return dataDict. get( index, 'unregistered data time series')
 
-#date is a string containing the date that fuzzyI was calculated on in DDMMYYYY
-#key = 'date' and/or 2
-
-#locus is an string containing the abbreviated geographic location that
-#fuzzyI, fuzzyTod and date apply to
-#key = 'locus' and/or 3
+def data2fact( index):
+    dataDict= { 
+            'WDIR': 'winddir',
+            'WSPD': 'windsp',
+            'GST': 'windgu',
+            'WVHT': 'NA',
+            'DPD': 'NA',
+            'APD': 'NA',
+            'MWD': 'NA',
+            'PRES': 'barom',
+            'ATMP': 'airt',
+            'WTMP': 'seandbc',
+            'DEWP': 'NA',
+            'VIS': 'NA', 
+            'TIDE': 'NA',
+            'ATMPM': 'NA',
+            'WTMPM': 'NA'}
+    return dataDict. get( index, 'unregistered data time series')
 
 class MyException(Exception):
     pass
 
-class Factory( facttype, fuzzyRangedict=False, locus='MLRF1', date):
-    """Factory Class"""
-    def __init__ (self):
-        if (type(date) is not type(0)):
-            assert MyException("Date parameter not formatted correctly. Should\
-                    be a 8 digit integer")
-        if (type(facttype) is not type('string')):
-            assert MyException("facttype parameter not of type string")
-        if ((type(locus) is not type('string')) or (len(locus) is not 5)):
-            assert MyException('locus parameter not formatted correctly. Should\
-                    be a string of length 5')
-        self.facttype = facttype
-        self.ranges = fuzzyRangedict
-        self.locus = locus
-        self.date = date
+class winddir(pk.Fact):
+    #wind direction
+    pass
 
-#FUZZYRANDEDICT STRUCTURE
-#rangeDict = {
-#        'fuzzyIRange': [NAN],
-#        'fuzzyTodRange':[NAN]
-#       }
+class windsp(pk.Fact):
+    #wind speed
+    pass
 
-    def fuzzyIDE(self, data?):
+class windgu(pk.Fact):
+    #wind gust
+    pass
 
-    def fuzzyTodDE(self, data?):
+class barom(pk.Fact):
+    #barometric pressure
+    pass
 
-    def dateDE(self, data?):
-            
-    def locusDE(self, data?):
+class airt(pk.Fact):
+    #air temperature
+    pass
 
-#TO READ JSON string file
-import pandas as pd
-import json
-jsonstring= open("filename.json", 'r').read()
-df= pd.read_json(jsonstring, orient='split')
+class seandbc(pk.Fact):
+    #sea temperature measured by ndbc
+    pass
+
+
+
+def factfactory( filen= filename):
+    #TO READ JSON string file
+    if os.path.exists(file_path):
+        jsonstring= open('../data/mlrf1_insitu_data/'+filename +".json", 'r').read()
+        df= pd.read_json(jsonstring, orient='split')
+        factorySort( df)
+    else: 
+        assert MyException(' '+filen+' data input file does not exist')
+        return
+
+def factorySort( df):
+    factlist= df.columns.values
+    for datatype in factlist:
+        if dataDict(datatype) != 'NA':
+            factory( df[datatype], datatype)
+
+def factory( datadf, datatype):
+    #if there is no specific range list for [locus][facttype] exit factory function
+    if not ranges[filename[:5]][dataDict[datatype]]:
+        assert MyException( 'datatype locus combination: '\
+            +datatype+'/'+filename+' does not have specified range file.\
+            Cannot factize.')
+        return
+
+    #else continue to factize datadf
+    factlist= []
+    for index in datadf.index.values:
+        factlist.append( data2function[datatype](datadf.iat[index, 0], index))
+    
+    #save/export facts using datatype 
+    factoryStore( factlist, data2fact(datatype))
+
+def factoryStore( factlist, factname):
+    with open('../data/fffacts/'+filename+'/'+factname+'.json', 'w') as fout:
+        json.dump( factlist, fout)
+
+
+def winddirGen( intensity, dt):
+    
+    return winddir(fuzzyI=fI, fuzzyTod= fTod, date= dt.date(), locus= filename[:5])
+
+def windspGen( intensity, dt):
+    
+    return windsp(fuzzyI=fI, fuzzyTod= fTod, date= dt.date(), locus= filename[:5])
+
+def windguGen( intensity, dt):
+    
+    return windgu(fuzzyI=fI, fuzzyTod= fTod, date= dt.date(), locus= filename[:5])
+
+def baromGen( intensity, dt):
+    
+    return barom(fuzzyI=fI, fuzzyTod= fTod, date= dt.date(), locus= filename[:5])
+
+def airtGen( intensity, dt):
+    
+    return airt(fuzzyI=fI, fuzzyTod= fTod, date= dt.date(), locus= filename[:5])
+
+def seandbcGen( intensity, dt):
+    
+    return seandbc(fuzzyI=fI, fuzzyTod= fTod, date= dt.date(), locus= filename[:5])
