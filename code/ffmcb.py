@@ -2,7 +2,7 @@
 #       example for a future, inherited fact factory implementation that would apply to
 #       any ecoforecast. Not just MCB for MLRF1
 
-##Last modified: Tue Jul 17, 2018  04:04PM
+##Last modified: Thu Jul 19, 2018  01:20PM
 __author__ = "Madison.Soden" 
 __license__ = "NA?"
 __version__ = "mcb"
@@ -15,8 +15,9 @@ import json
 import csv
 import rangedict as rdi
 import os.path
+import numpy as np
+import datetime
 
-filename= 'mlrf1h2017'
 
 def data2function( index):
     dataDict= {
@@ -85,63 +86,106 @@ class seandbc(pk.Fact):
 
 
 
-def factfactory( filen= filename):
+def factfactory( filen= 'mlrf1h2017', stationn= 'mlrf1'):
     #TO READ JSON string file
-    if os.path.exists(file_path):
-        jsonstring= open('../data/mlrf1_insitu_data/'+filename +".json", 'r').read()
+    if os.path.exists('../data/mlrf1_insitu_data/'+filen+".json"):
+        jsonstring= open('../data/mlrf1_insitu_data/'+filen+".json", 'r').read()
         df= pd.read_json(jsonstring, orient='split')
-        factorySort( df)
+        factorySort( df, filen, stationn)
     else: 
         assert MyException(' '+filen+' data input file does not exist')
         return
 
-def factorySort( df):
+def factorySort( df, filen, stationn):
     factlist= df.columns.values
     for datatype in factlist:
-        if dataDict(datatype) != 'NA':
-            factory( df[datatype], datatype)
+        if data2fact(datatype) != 'NA':
+            factory( df[datatype], datatype, filen, stationn)
 
-def factory( datadf, datatype):
+def factory( datadf, datatype, filen, stationn):
     #if there is no specific range list for [locus][facttype] exit factory function
-    if not ranges[filename[:5]][dataDict[datatype]]:
+    if not rdi.ranges[stationn][data2fact(datatype)]:
         assert MyException( 'datatype locus combination: '\
-            +datatype+'/'+filename+' does not have specified range file.\
+            +datatype+'/'+stationn+' does not have specified range file.\
             Cannot factize.')
         return
 
     #else continue to factize datadf
     factlist= []
     for index in datadf.index.values:
-        factlist.append( data2function[datatype](datadf.iat[index, 0], index))
+        indexloc= datadf.index.get_loc(index)
+        i=pd.Timestamp(index)
+        i=pd.to_datetime(i)
+        intensity= datadf.iat[ indexloc]
+        if not np.isnan( intensity):
+            factlist.append( data2function(datatype)( intensity, i, stationn))
     
     #save/export facts using datatype 
-    factoryStore( factlist, data2fact(datatype))
+    factoryStore( factlist, data2fact(datatype), filen)
 
-def factoryStore( factlist, factname):
-    with open('../data/fffacts/'+filename+'/'+factname+'.json', 'w') as fout:
+def factoryStore( factlist, factname, filenn):
+    with open('../data/fffacts/'+filenn+'/'+factname+'.json', 'w') as fout:
         json.dump( factlist, fout)
 
+def fuzzyTod( t):
+    #round to nearest hour
+    t= t.hour +t.minute//30
+    xcoor= rdi.times['mlrf1'][0]
+    ycoor= range(len( xcoor))
+    y= np.floor( np.interp( t, xcoor, ycoor))
+    fuzzyT=rdi.standardtime[ int(y)]
+    return fuzzyT
 
-def winddirGen( intensity, dt):
-    
-    return winddir(fuzzyI=fI, fuzzyTod= fTod, date= dt.date(), locus= filename[:5])
+def fuzzyI( intensity, stationn, factn): 
+    xcoor= rdi.ranges[ stationn][ factn][0]
+    ycoor= range(len( xcoor))
+    y= np.floor( np.interp( intensity, xcoor, ycoor, left=-99, right= 99))
+    y= int( y)
+    if(y== -99):
+        return 'ulow'
+    elif(y== 99):
+        return 'uhigh'
+    else: 
+        return rdi.ranges[ stationn][ factn][ 1][ y]
 
-def windspGen( intensity, dt):
-    
-    return windsp(fuzzyI=fI, fuzzyTod= fTod, date= dt.date(), locus= filename[:5])
+def winddirGen( intensity, dt, stationn):
+    ##calculating fuzzyI 
+    fI= fuzzyI( intensity, stationn, 'winddir')
+    ## calculating fuzzyTod
+    fTod= fuzzyTod( dt.time())
+    return winddir(fuzzyI=fI, fuzzyTod= fTod, date= dt.strftime('%m/%d/%Y'), locus= stationn)
 
-def windguGen( intensity, dt):
-    
-    return windgu(fuzzyI=fI, fuzzyTod= fTod, date= dt.date(), locus= filename[:5])
+def windspGen( intensity, dt, stationn):
+    ##calculating fuzzyI
+    fI= fuzzyI( intensity, stationn, 'windsp')
+    ## calculating fuzzyTod
+    fTod= fuzzyTod( dt.time())
+    return windsp(fuzzyI=fI, fuzzyTod= fTod, date= dt.strftime('%m/%d/%Y'), locus= stationn)
 
-def baromGen( intensity, dt):
-    
-    return barom(fuzzyI=fI, fuzzyTod= fTod, date= dt.date(), locus= filename[:5])
+def windguGen( intensity, dt, stationn):
+    ##calculating fuzzyI
+    fI= fuzzyI( intensity, stationn, 'windgu')
+    ## calculating fuzzyTod
+    fTod= fuzzyTod( dt.time())
+    return windgu(fuzzyI=fI, fuzzyTod= fTod, date= dt.strftime('%m/%d/%Y'), locus= stationn)
 
-def airtGen( intensity, dt):
-    
-    return airt(fuzzyI=fI, fuzzyTod= fTod, date= dt.date(), locus= filename[:5])
+def baromGen( intensity, dt, stationn):
+    ##calculating fuzzyI
+    fI= fuzzyI( intensity, stationn, 'barom')
+    ## calculating fuzzyTod
+    fTod= fuzzyTod( dt.time())
+    return barom(fuzzyI=fI, fuzzyTod= fTod, date= dt.strftime('%m/%d/%Y'), locus= stationn)
 
-def seandbcGen( intensity, dt):
-    
-    return seandbc(fuzzyI=fI, fuzzyTod= fTod, date= dt.date(), locus= filename[:5])
+def airtGen( intensity, dt, stationn):
+    ##calculating fuzzyI
+    fI= fuzzyI( intensity, stationn, 'airt')
+    ## calculating fuzzyTod
+    fTod= fuzzyTod( dt.time())
+    return airt(fuzzyI=fI, fuzzyTod= fTod, date= dt.strftime('%m/%d/%Y'), locus= stationn)
+
+def seandbcGen( intensity, dt, stationn):
+    ##calculating fuzzyI
+    fI= fuzzyI( intensity, stationn, 'seandbc')
+    ## calculating fuzzyTod
+    fTod= fuzzyTod( dt.time())
+    return seandbc(fuzzyI=fI, fuzzyTod= fTod, date= dt.strftime('%m/%d/%Y'), locus= stationn)
