@@ -1,6 +1,12 @@
 #test_init_Facts.py
 #tests fact initialization
 
+__author__= "Madison.Soden"
+__date__= "Thu Jul 19, 2018  03:23PM"
+__license__= "NA?"
+__email__= "madison.soden@gmail.com"
+__status__= "Production"
+
 import sys
 sys.path.append('../')
 import mcb

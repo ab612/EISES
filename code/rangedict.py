@@ -1,3 +1,12 @@
+###script to hard code lower bound values for fuzzy intensities and fuzzy times.
+####also stores corresponding string names of fuzzy values
+
+__author__= "Madison.Soden"
+__date__= "Thu Jul 19, 2018  03:20PM"
+__license__= "NA?"
+__email__= "madison.soden@gmail.com"
+__status__= "Production"
+
 import datetime
 
 standardfuzzy= ['dlow', 'vlow', 'low', 'slow', 'average', 'shigh', 'high', 'vhigh', 'dhigh']

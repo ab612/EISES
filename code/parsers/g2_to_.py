@@ -1,14 +1,15 @@
 ###g2_to_csv.py is a parse to convert a g2 fact file in .bb format to a csv fact file
-__author__ = "Madison.Soden"
-__date__ = "Tue Mar 13 10:52:30 2018"
-__license__ = "NA?"
-__version__ = "g2_to_csv"
-__email__ = "madison.soden@gmail.com"
-__status__ = "Production"
+
+__author__= "Madison.Soden"
+__date__= "Thu Jul 19, 2018  03:20PM"
+__license__= "NA?"
+__email__= "madison.soden@gmail.com"
+__status__= "Production"
 
 import datetime as dt
 import pickle as p
 import csv
+
 ###SAMPLE FACT
 #(mlrf1 sat-chlor_a 0 23 low all-day of day 169 year 2017)
 

@@ -2,12 +2,11 @@
 #       example for a future, inherited fact factory implementation that would apply to
 #       any ecoforecast. Not just MCB for MLRF1
 
-##Last modified: Thu Jul 19, 2018  01:20PM
-__author__ = "Madison.Soden" 
-__license__ = "NA?"
-__version__ = "mcb"
-__email__ = "madison.soden@gmail.com"
-__status__ = "Production"
+__author__= "Madison.Soden" 
+__date__= "Tue Jul 24, 2018  11:53AM"
+__license__= "NA?"
+__email__= "madison.soden@gmail.com"
+__status__= "Production"
 
 import pyknow as pk
 import pandas as pd
@@ -17,7 +16,7 @@ import rangedict as rdi
 import os.path
 import numpy as np
 import datetime
-
+import os
 
 def data2function( index):
     dataDict= {
@@ -111,20 +110,33 @@ def factory( datadf, datatype, filen, stationn):
         return
 
     #else continue to factize datadf
+    first= datadf.index.values[0]
+    first= pd.Timestamp(first)
+    first= pd.to_datetime(first)
+    first= first.strftime('%m_%d_%y')
+    currdate= first
     factlist= []
+
     for index in datadf.index.values:
         indexloc= datadf.index.get_loc(index)
         i=pd.Timestamp(index)
         i=pd.to_datetime(i)
         intensity= datadf.iat[ indexloc]
-        if not np.isnan( intensity):
-            factlist.append( data2function(datatype)( intensity, i, stationn))
-    
-    #save/export facts using datatype 
-    factoryStore( factlist, data2fact(datatype), filen)
+        if (i.strftime('%m_%d_%y')==currdate):
+            if not np.isnan( intensity):
+                factlist.append( data2function(datatype)( intensity, i, stationn))
+        else:
+            #save and export facts using datatype
+            factoryStore( factlist, data2fact(datatype), filen, currdate)
+            currdate= i.strftime('%m_%d_%y')
+            factlist= []
+            if not np.isnan( intensity):
+                factlist.append( data2function(datatype)(intensity, i, stationn))
 
-def factoryStore( factlist, factname, filenn):
-    with open('../data/fffacts/'+filenn+'/'+factname+'.json', 'w') as fout:
+def factoryStore( factlist, factname, filen, date):
+    if not os.path.exists(os.path.dirname('../data/fffacts/'+filen+'/'+date+'/'+factname+'.json')):
+        os.makedirs(os.path.dirname('../data/fffacts/'+filen+'/'+date+'/'+factname+'.json'))
+    with open('../data/fffacts/'+filen+'/'+date+'/'+factname+'.json', 'w') as fout:
         json.dump( factlist, fout)
 
 def fuzzyTod( t):
