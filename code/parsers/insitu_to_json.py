@@ -1,12 +1,11 @@
 ### insituTXT_to_JSON converts a data stream txt file (for a year of mlrf1) to A standardized JSON file format for
-### fact factories to process
-### Last modified: Mon Jul 16, 2018  01:42PM
+#### fact factories to process
 
-__author__="Madison.Soden"
-__license__="NA?"
-__version__="insituTXT_to_JSON"
-__email__="madison.soden@gmail.com"
-__status__="Production"
+__author__= "Madison.Soden"
+__date__= "Thu Jul 19, 2018  03:22PM"
+__license__= "NA?"
+__email__= "madison.soden@gmail.com"
+__status__= "Production"
 
 import pandas as pd
 import json

@@ -1,11 +1,12 @@
-###
-### Last modified: Mon Jul 16, 2018  01:43PM
+###pdsAveraging.py contains helper functions to calculate average values for
+####time series of data stored in a pandas data frame
+####usually called by insituTXT_2_JSON.py
 
-__author__="Madison.Soden"
-__license__="NA?"
-__version__="pdsAveraging.py"
-__email__="madison.soden@gmail.com"
-__status__="Production"
+__author__= "Madison.Soden"
+__date__= "Thu Jul 19, 2018  03:22PM"
+__license__= "NA?"
+__email__= "madison.soden@gmail.com"
+__status__= "Production"
 
 import pandas as pd 
 import json 
