@@ -1,5 +1,5 @@
-#YY  MM DD hh mm WDIR WSPD GST  WVHT   DPD   APD MWD   PRES  ATMP  WTMP  DEWP  VIS  TIDE
-#yr  mo dy hr mn degT m/s  m/s     m   sec   sec deg    hPa  degC  degC  degC  nmi    ft
+YYYY  MM DD hh mm WDIR WSPD GST  WVHT   DPD   APD MWD   PRES  ATMP  WTMP  DEWP  VIS  TIDE
+yr  mo dy hr mn degT m/s  m/s     m   sec   sec deg    hPa  degC  degC  degC  nmi    ft
 2017 01 01 00 00 119  8.6 99.0 99.00 99.00 99.00 999 9999.0  23.8 999.0 999.0 99.0 99.00
 2017 01 01 01 00 148  9.1 99.0 99.00 99.00 99.00 999 9999.0 999.0 999.0 999.0 99.0 99.00
 2017 01 01 03 00 123  9.3 10.3 99.00 99.00 99.00 999 1021.5  24.3  25.6 999.0 99.0 99.00

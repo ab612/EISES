@@ -3,7 +3,7 @@
 #       any ecoforecast. Not just MCB for MLRF1
 
 __author__= "Madison.Soden" 
-__date__= "Tue Jul 24, 2018  01:05PM"
+__date__= "Thu Jul 26, 2018  02:35PM"
 __license__= "NA?"
 __email__= "madison.soden@gmail.com"
 __status__= "Production"
@@ -17,6 +17,7 @@ import os.path
 import numpy as np
 import datetime
 import os
+from IPython import embed
 
 def data2function( index):
 #dictionary function to return a call to fact type specific generating functions given a fact data frame abbreviation
@@ -87,22 +88,24 @@ class seandbc(pk.Fact):
     pass
 
 
-def factfactory( filen= 'mlrf1h2017', stationn= 'mlrf1'):
+def factfactory( filen, stationn):
     ##TO READ JSON string file
     #check that user requested filename exists inf file archive
     if os.path.exists('../data/mlrf1_insitu_data/'+filen+".json"):
         #read json file into a pandas data frame
         jsonstring= open('../data/mlrf1_insitu_data/'+filen+".json", 'r').read()
         df= pd.read_json(jsonstring, orient='split')
+        embed();
         factorySort( df, filen, stationn)
     else: 
         #if requested file does not exist alert the user
-        assert MyException(' '+filen+' data input file does not exist')
+        raise MyException(' '+filen+' data input file does not exist')
         return
 
 def factorySort( df, filen, stationn):
 #partition data frame into series containing one fact type and then begin fact creation/storage process for each fact type separately
     factlist= df.columns.values
+    embed()
     for datatype in factlist:
         if data2fact(datatype) != 'NA':
             factory( df[datatype], datatype, filen, stationn)
@@ -155,7 +158,7 @@ def factory( datadf, datatype, filen, stationn):
 
 def factoryStore( factlist, factname, filen, date):
     #create directory for corresponding date if one does not already exist
-    if not os.path.exists(os.path.dirname('../data/fffacts/'+filen+'/'+date)):
+    if not os.path.exists(os.path.dirname('../data/fffacts/'+filen+'/'+date+'/'+factname+'.json')):
         os.makedirs(os.path.dirname('../data/fffacts/'+filen+'/'+date+'/'+factname+'.json'))
     #save list of specific date & fact type as json file
     with open('../data/fffacts/'+filen+'/'+date+'/'+factname+'.json', 'w') as fout:
@@ -169,9 +172,9 @@ def fuzzyTod( t):
     ycoor= range(len( xcoor))
     #predict position of time intensity relative to fuzzy lower bounds
     y= np.floor( np.interp( t, xcoor, ycoor))
-    #look up corresponding fuzzyT string value
-    fuzzyT=rdi.standardtime[ int(y)]
-    return fuzzyT
+    #look up corresponding fuzzyTod string value
+    fuzzyTod=rdi.standardtime[ int(y)]
+    return fuzzyTod
 
 def fuzzyI( intensity, stationn, factn): 
     #get lists of all fuzzy lower bounds(xcoor) and corresponding positions in list (ycoor) to use in interpolate function
@@ -185,8 +188,10 @@ def fuzzyI( intensity, stationn, factn):
         return 'ulow'
     elif(y== 99):
         return 'uhigh'
-    else: 
+    elif(y< 9): 
         return rdi.ranges[ stationn][ factn][ 1][ y]
+    else:
+        embed()
 
 def winddirGen( intensity, dt, stationn):
 #generate wind direction type fact

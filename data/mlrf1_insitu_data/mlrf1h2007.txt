@@ -1,5 +1,5 @@
-#YY  MM DD hh mm WDIR WSPD GST  WVHT   DPD   APD MWD   PRES  ATMP  WTMP  DEWP  VIS  TIDE
-#yr  mo dy hr mn degT m/s  m/s     m   sec   sec degT   hPa  degC  degC  degC  nmi    ft
+YYYY  MM DD hh mm WDIR WSPD GST  WVHT   DPD   APD MWD   PRES  ATMP  WTMP  DEWP  VIS  TIDE
+yr  mo dy hr mn degT m/s  m/s     m   sec   sec degT   hPa  degC  degC  degC  nmi    ft
 2007 01 01 00 00 101  7.3  8.0 99.00 99.00 99.00 999 1020.5  25.2  25.7 999.0 99.0 99.00
 2007 01 01 01 00 100  6.4  7.5 99.00 99.00 99.00 999 1021.0  25.2  25.7 999.0 99.0 99.00
 2007 01 01 02 00  97  5.8  6.5 99.00 99.00 99.00 999 1021.3  25.2  25.6 999.0 99.0 99.00

@@ -3,7 +3,7 @@
 ####usually called by insituTXT_2_JSON.py
 
 __author__= "Madison.Soden"
-__date__= "Thu Jul 19, 2018  03:22PM"
+__date__= "Tue Jul 24, 2018  04:25PM"
 __license__= "NA?"
 __email__= "madison.soden@gmail.com"
 __status__= "Production"
@@ -24,7 +24,9 @@ def append3Mean( coulmnname, df):
     return df
 
 def removeExtraDateTime( df):
-    df= df.drop(columns=['YY', 'MM', 'DD', 'hh', 'mm'])
+    df= df.drop(columns=['YYYY', 'MM', 'DD', 'hh'])
+    if('mm' in df.columns.values):
+        df= df.drop(columns=['mm'])
     return df
 
 def cuttimeseries( df):

@@ -1,7 +1,7 @@
 ###mcb Ecoforecast prototype goal is to implement rules base from http://ecoforecast.coral.noaa.gov/index/0/MLRF1/model-detail&name=MASS-CORAL-BLEACHING and 'print' a forecast###
 
 __author__= "Madison Soden"
-__date__= "Thu Jul 19, 2018  04:02PM"
+__date__= "Tue Jul 24, 2018  01:48PM"
 __license__= "NA?"
 __email__= "madison.soden@gmail.com"
 __status__= "Production"
@@ -11,6 +11,7 @@ __status__= "Production"
 
 from pyknow import *
 import texttable as tt
+from IPython import embed
 
 ###Fact Definition Documentation### 
     #fact names are declared as 'parsurf', 'sst', 'windsp', 'tide1m',
@@ -570,8 +571,12 @@ class MCB(KnowledgeEngine):
         print(' ', RuleRef('s'))
 
 
+
+
 def knowledge_engine( factlist):
     e= MCB()
     e.reset()
-    e.declare( faactlist[:])
+    for f in factlist:
+        e.declare( f)
+    embed()
     e.run()
