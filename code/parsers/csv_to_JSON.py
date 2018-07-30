@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 ### csv_to_JSON converts a data stream CSV to A standardized JSON file format for
 ### fact factories to process
 

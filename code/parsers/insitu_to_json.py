@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 ### insituTXT_to_JSON converts a data stream txt file (for a year of mlrf1) to A standardized JSON file format for
 #### fact factories to process
 
@@ -19,12 +21,12 @@ def main(filename):
     # 1.PARSING txt file 
     ###########################################################
 
-    with open('/Users/madison.soden/AOML Workspace/projects/mcb/data/mlrf1_insitu_data/'+ filename+'.txt', 'r') as fin:
+    with open('/Users/soden/AOMLworkspace/mcb/data/mlrf1_insitu_data/'+ filename+'.txt', 'r') as fin:
         data = fin.read().splitlines(True)
     header= data[0]
     units= data[1]
     data=data[2:]
-
+    
     ##Parsing units and header
     header= header[:-1]
     headerp= header.split(' ')
@@ -61,15 +63,13 @@ def main(filename):
 
     #################################################################
     # 2. CLEANING AND CONVERTING DATA FRAME
-    #################################################################
+   #################################################################
 
     #converting all strings in data frame into ints of floats
     for column in list(df):
         df[column][1:]= pd.to_numeric(df[column][1:])
 
     #creating a datetime column
-
-
     df['datetime']= np.nan
     for index in list(df.index.values)[1:]:
         #translate 2 digit years into four digit years
@@ -87,7 +87,6 @@ def main(filename):
                                         0)
         df.at[index, 'datetime']= currdatetime
 
-
     #setting dummy value for units row
     df.at[0, 'datetime']= datetime.datetime(1111, 1, 1, 1, 1, 1)
 
@@ -95,7 +94,6 @@ def main(filename):
     #re indexing df by datetime
     df.index= df['datetime']
     del df['datetime']
-
 
     namedict= { 'YYYY': ['year', 'years', 1111],
                 'MM': ['month', 'months', np.nan],
@@ -122,8 +120,7 @@ def main(filename):
         for index in list(df.index.values):
             if(df.iat[df.index.get_loc(index), column] ==
                     namedict[headerp[column]][2]):
-                df.at[index, column]= np.nan
-
+                df.at[index, headerp[column]]= np.nan
 
     #create hourly time series with no gaps
     df = cleanDataframe( df)
@@ -146,7 +143,7 @@ def main(filename):
 
     ##Creating json file
     jsondf= df.to_json(orient='split')
-    with open('/Users/madison.soden/AOML Workspace/projects/mcb/data/mlrf1_insitu_data/'+filename+'.json', 'w') as f:
+    with open('/Users/soden/AOMLworkspace/mcb/data/mlrf1_insitu_data/'+filename+'.json', 'w') as f:
         f.write(jsondf)
 
 #TO READ JSON string file

@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 ### main function to call knowledge engine based ecoforecast pipeline
 
 __author__= "Madison.Soden"
@@ -13,33 +14,8 @@ import json
 from os import listdir
 from os.path import isfile, join
 from  parsers import insitu_to_json
-
-class airt( pk.Fact):
-    pass
-class barom( pk.Fact):
-    pass
-class seandbc( pk.Fact):
-    pass
-class winddir( pk.Fact):
-    pass
-class windgu( pk.Fact):
-    pass
-class windsp( pk.Fact):
-    pass
-
-
-def airt_decoder( obj):
-    return airt(fuzzyI= obj['fuzzyI'], fuzzyTod= obj['fuzzyTod'], date= obj['date'], locus= obj['locus'])
-def barom_decoder( obj):
-    return barom(fuzzyI= obj['fuzzyI'], fuzzyTod= obj['fuzzyTod'], date= obj['date'], locus= obj['locus'])
-def seandbc_decoder( obj):
-    return seandbc(fuzzyI= obj['fuzzyI'], fuzzyTod= obj['fuzzyTod'], date= obj['date'], locus= obj['locus'])
-def winddir_decoder( obj):
-    return winddir(fuzzyI= obj['fuzzyI'], fuzzyTod= obj['fuzzyTod'], date= obj['date'], locus= obj['locus'])
-def windgu_decoder( obj):
-    return windgu(fuzzyI= obj['fuzzyI'], fuzzyTod= obj['fuzzyTod'], date= obj['date'], locus= obj['locus'])
-def windsp_decoder( obj):
-    return windsp(fuzzyI= obj['fuzzyI'], fuzzyTod= obj['fuzzyTod'], date= obj['date'], locus= obj['locus'])
+from IPython import embed
+import fact
 
 
 def main( factfilename, stationname, date=''): 
@@ -75,18 +51,25 @@ def main( factfilename, stationname, date=''):
         #put fact files into single fact list
         factlist= []
         with open("../data/fffacts/"+factfilename+'/'+date+"/airt.json", 'r') as fin:
-            factlist= factlist + json.load( fin, object_hook= airt_decoder)
+            factlist= factlist + json.load( fin, object_hook= fact.airt_decoder)
         with open("../data/fffacts/"+factfilename+'/'+date+"/barom.json", 'r') as fin:
-            factlist= factlist + json.load( fin, object_hook= barom_decoder)
+            factlist= factlist + json.load( fin, object_hook= fact.barom_decoder)
         with open("../data/fffacts/"+factfilename+'/'+date+"/seandbc.json", 'r') as fin:
-            factlist= factlist + json.load( fin, object_hook= seandbc_decoder)
+            factlist= factlist + json.load( fin, object_hook= fact.seandbc_decoder)
         with open("../data/fffacts/"+factfilename+'/'+date+"/winddir.json", 'r') as fin:
-            factlist= factlist + json.load( fin, object_hook= winddir_decoder)
+            factlist= factlist + json.load( fin, object_hook= fact.winddir_decoder)
         with open("../data/fffacts/"+factfilename+'/'+date+"/windgu.json", 'r') as fin:
-            factlist= factlist + json.load( fin, object_hook= windgu_decoder)
+            factlist= factlist + json.load( fin, object_hook= fact.windgu_decoder)
         with open("../data/fffacts/"+factfilename+'/'+date+"/windsp.json", 'r') as fin:
-            factlist= factlist + json.load( fin, object_hook= windsp_decoder)
+            factlist= factlist + json.load( fin, object_hook= fact.windsp_decoder)
         
         #call knowledge engine to process analyze facts
-        ke.knowledge_engine( factlist)
+        e = ke.MCB()
+        e.reset()
+        embed()
+        for f in factlist:
+            e.declare(f)
+
+        embed()
+        e.run()
         return 

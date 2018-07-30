@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 ### ffmcb.py is a prototype fact factory implementation, meant to help provide an
 #       example for a future, inherited fact factory implementation that would apply to
 #       any ecoforecast. Not just MCB for MLRF1
@@ -95,7 +97,6 @@ def factfactory( filen, stationn):
         #read json file into a pandas data frame
         jsonstring= open('../data/mlrf1_insitu_data/'+filen+".json", 'r').read()
         df= pd.read_json(jsonstring, orient='split')
-        embed();
         factorySort( df, filen, stationn)
     else: 
         #if requested file does not exist alert the user
@@ -105,7 +106,6 @@ def factfactory( filen, stationn):
 def factorySort( df, filen, stationn):
 #partition data frame into series containing one fact type and then begin fact creation/storage process for each fact type separately
     factlist= df.columns.values
-    embed()
     for datatype in factlist:
         if data2fact(datatype) != 'NA':
             factory( df[datatype], datatype, filen, stationn)
@@ -188,13 +188,11 @@ def fuzzyI( intensity, stationn, factn):
         return 'ulow'
     elif(y== 99):
         return 'uhigh'
-    elif(y< 9): 
+    else: 
         return rdi.ranges[ stationn][ factn][ 1][ y]
-    else:
-        embed()
 
 def winddirGen( intensity, dt, stationn):
-#generate wind direction type fact
+    #generate wind direction type fact
     ##calculating fuzzyI 
     fI= fuzzyI( intensity, stationn, 'winddir')
     ## calculating fuzzyTod

@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 ###g2_to_csv.py is a parse to convert a g2 fact file in .bb format to a csv fact file
 
 __author__= "Madison.Soden"

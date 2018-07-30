@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 ###mcb Ecoforecast prototype goal is to implement rules base from http://ecoforecast.coral.noaa.gov/index/0/MLRF1/model-detail&name=MASS-CORAL-BLEACHING and 'print' a forecast###
 
 __author__= "Madison Soden"
@@ -10,8 +12,8 @@ __status__= "Production"
 ############################################################################################???????????????????????????? rule 18 verse rule 20 supposed to call different facts???????????????????????
 
 from pyknow import *
-import texttable as tt
 from IPython import embed
+import fact
 
 ###Fact Definition Documentation### 
     #fact names are declared as 'parsurf', 'sst', 'windsp', 'tide1m',
@@ -67,124 +69,36 @@ def anyof(*values):
     return P(lambda y: y in values)
 
 ###FACT DECLARATIONS###
-class parsurf(Fact):
-    #photosynthetically active radiation at ocean surface
-    pass
-
-class sst(Fact):
-    #Remss 'misst' Blended Microwave/infrared sst (surface sea temperature)
-    pass
-
-class windsp(Fact):
-    #hourly average wind speed
-    pass
-
-class tide1m(Fact):
-    #tide level at ~1m depth
-    pass
-
-class seandbc(Fact):
-    #depth-averaged sea temperature
-    pass
-
-class sea1m(Fact):
-    #sea temperature at ~1m depth
-    pass
-
-class curveB(Fact):
-    #Berkelmans Temperature-Duration Bleaching Curve
-    pass
-
-class sea1mM(Fact):
-    #Monthly mean sea temperature at ~1m depth
-    pass
-
-class seandbcM(Fact):
-    #Monthly Mean Depth-Averaged Sea Temperature
-    pass
-
-class windsp3day(Fact):
-    #3-day average wind speed
-    pass
-
 
 class MCB(KnowledgeEngine):
 
 #initial instruction output
-#    print("""\n
-#        ----------------------------------------------------------------------
-#        To declare Knowledge Engine:
-#        >> e = mcb.MCB()
-#        >> e.reset()
-#        \n
-#        To add facts to fact list call:
-#        >> e.declare_facts()
-#        >> e.declare_facts('factname', 'fuzzyI', 'fuzzyTod', 'date', 'locus')
-#        \n
-#        To import a fact csv call:
-#        >> e.import_facts('./test_suite/fact_CSVs/testX.csv')
-#        \n
-#        To view current rule base call:
-#        >> e.get_rules()
-#        \n
-#        To view rule nomenclature reference call:
-#        >> mcb.printRuleRef()
-#        \n
-#        To view current fact base call:
-#        >> e.print_facts()
-#        \n
-#        To run Knowledge Engine call:
-#        >> e.run()
-#        ----------------------------------------------------------------------
-#         \n  \n \n""")
-
-#function to pipe pyknow e.fact output into something legible
-    
-    def print_facts(self):
-    ## messy parsing of giantstring'
-        giantstring = self.facts.__str__()
-        giantstring = giantstring.strip('<f-')
-        giantstring = giantstring.rstrip(')')
-        factlines =giantstring.split(")\n<f-")
-        printlist = []
-        while factlines:
-            factstring = factlines.pop(0)
-            factstring = factstring.split(',', 1)
-            key = factstring[0]
-            factstring = factstring[1]
-            factstring = factstring[4:]
-            factstring = factstring.split('(', 1)
-            factname = factstring[0]
-            if len(factstring[1]) > 4:
-                factstring = factstring[1]
-                factstring = factstring[8:]
-                factstring = factstring.split('\'', 1)
-                rRangeAtt = factstring[0]
-                factstring = factstring[1]
-                factstring = factstring[12:]
-                factstring = factstring.split('\'', 1)
-                todAtt = factstring[0]
-                factstring = factstring[1]
-                factstring = factstring[8:]
-                factstring = factstring.split('\'', 1)
-                dateAtt = factstring[0]
-                factstring = factstring[1]
-                factstring = factstring[9:]
-                factstring = factstring.split('\'', 1)
-                locusAtt = factstring[0]
-            else :
-                rRangeAtt, todAtt, dateAtt, locusAtt = ' ', ' ', ' ', ' '
-            factlist = [key, factname, rRangeAtt, todAtt, dateAtt, locusAtt]
-            printlist.append(factlist)
-
-    ##formatting printlist using Texttable library
-        table = tt.Texttable()
-        headings = ['Key', 'Fact', 'fuzzyI', 'fuzzyTod', 'Date', 'Locus']
-        table.header(headings)
-        for x in printlist:
-            table.add_row(x)
-        s = table.draw()
-        print(s)
+    print("""\n
+        ----------------------------------------------------------------------
+        To declare Knowledge Engine:
+        >> e = mcb.MCB()
+        >> e.reset()
+        \n
+        To add facts to fact list call:
+        >> e.declare_facts()
+        >> e.declare_facts('factname', 'fuzzyI', 'fuzzyTod', 'date', 'locus')
+        \n
+        To import a fact csv call:
+        >> e.import_facts('./test_suite/fact_CSVs/testX.csv')
+        \n
+        To view current rule base call:
+        >> e.get_rules()
+        \n
+        To view rule nomenclature reference call:
+        >> mcb.printRuleRef()
+        \n
+        To view current fact base call:
+        >> e.facts
+        \n
+        To run Knowledge Engine call:
+        >> e.run()
+        ----------------------------------------------------------------------
+         \n  \n \n""")
 
 #test functions to initialize specific combinations of facts
     def import_facts(self, filename='1'):
@@ -222,88 +136,88 @@ class MCB(KnowledgeEngine):
 
 ###RULE DECLARATIONS###
 #Unbelievable value Rules
-    @Rule(OR(sst(fuzzyI='uLow'), sst(fuzzyI='uHigh')))
+    @Rule(OR(fact.sst(fuzzyI='uLow'), sst(fuzzyI='uHigh')))
     def u_fI_sst(self):
         print("sst values in unbelievable range")
 
-    @Rule(OR(windsp(fuzzyI='uLow'), windsp(fuzzyI='uHigh')))
+    @Rule(OR(fact.windsp(fuzzyI='uLow'), windsp(fuzzyI='uHigh')))
     def u_fI_windsp(self):
         print("wind scalar values in unbelievable range")
 
-    @Rule(OR(seandbc(fuzzyI='uLow'), seandbc(fuzzyI='uHigh')))
+    @Rule(OR(fact.seandbc(fuzzyI='uLow'), seandbc(fuzzyI='uHigh')))
     def u_fI_seandbc(self):
         print("seandbc values in unbelievable range")
 
-    @Rule(OR(parsurf(fuzzyI='uLow'), parsurf(fuzzyI='uHigh')))
+    @Rule(OR(fact.parsurf(fuzzyI='uLow'), parsurf(fuzzyI='uHigh')))
     def u_fI_parsurf(self):
         print("parsurf values in unbelievable range")
 
-    @Rule(OR(tide1m(fuzzyI='uLow'), tide1m(fuzzyI='uHigh')))
+    @Rule(OR(fact.tide1m(fuzzyI='uLow'), tide1m(fuzzyI='uHigh')))
     def u_fI_tide1m(self):
         print("tide1m values in unbelievable range")
 
-    @Rule(OR(sea1m(fuzzyI='uLow'), sea1m(fuzzyI='uHigh')))
+    @Rule(OR(fact.sea1m(fuzzyI='uLow'), sea1m(fuzzyI='uHigh')))
     def u_fI_sea1m(self):
         print("sea1m values in unbelievable range")
 
-    @Rule(OR(seandbcM(fuzzyI='uLow'), seandbcM(fuzzyI='uHigh')))
+    @Rule(OR(fact.seandbcM(fuzzyI='uLow'), seandbcM(fuzzyI='uHigh')))
     def u_fI_seandbcM(self):
         print("seandbcM values in unbelievable range")
 
-    @Rule(OR(windsp3day(fuzzyI='uLow'), windsp3day(fuzzyI='uHigh')))
+    @Rule(OR(fact.windsp3day(fuzzyI='uLow'), windsp3day(fuzzyI='uHigh')))
     def u_fI_windsp3day(self):
         print("windsp3day values in unbelievable range")
 
-    @Rule(OR(sea1mM(fuzzyI='uLow'), sea1mM(fuzzyI='uHigh')))
+    @Rule(OR(fact.sea1mM(fuzzyI='uLow'), sea1mM(fuzzyI='uHigh')))
     def u_fI_sea1mM(self):
         print("sea1mM values in unbelievable range")
 
-    @Rule(OR(curveB(fuzzyI='uLow'), curveB(fuzzyI='uHigh')))
+    @Rule(OR(fact.curveB(fuzzyI='uLow'), curveB(fuzzyI='uHigh')))
     def u_fI_curveB(self):
         print("curveB values in unbelievable range")
 
 #Missing info rules
-    @Rule(NOT(sst(fuzzyI= anyof('uLow', 'dLow', 'vLow', 'Low', 'sLow',
+    @Rule(NOT(fact.sst(fuzzyI= anyof('uLow', 'dLow', 'vLow', 'Low', 'sLow',
         'average', 'sHigh', 'High', 'vHigh', 'dHigh', 'uHigh'))))
     def m_fI_sst(self):
         print("missing or unreadable value for sst fuzzyI")
 
-    @Rule(NOT(seandbc(fuzzyI= anyof('uLow', 'dLow', 'vLow', 'Low', 'sLow',
+    @Rule(NOT(fact.seandbc(fuzzyI= anyof('uLow', 'dLow', 'vLow', 'Low', 'sLow',
         'average', 'sHigh', 'High', 'vHigh', 'dHigh', 'uHigh'))))
     def m_fI_seandbc(self):
         print("missing or unreadable value for seandbc fuzzyI")
 
-    @Rule(NOT(parsurf(fuzzyI= anyof('uLow', 'dLow', 'vLow', 'Low', 'sLow',
+    @Rule(NOT(fact.parsurf(fuzzyI= anyof('uLow', 'dLow', 'vLow', 'Low', 'sLow',
         'average', 'sHigh', 'High', 'vHigh', 'dHigh', 'uHigh'))))
     def m_fI_parsurf(self):
         print("missing or unreadable value for parsurf fuzzyI")
 
-    @Rule(NOT(windsp(fuzzyI= anyof('uLow', 'dLow', 'vLow', 'Low', 'sLow',
+    @Rule(NOT(fact.windsp(fuzzyI= anyof('uLow', 'dLow', 'vLow', 'Low', 'sLow',
         'average', 'sHigh', 'High', 'vHigh', 'dHigh', 'uHigh'))))
     def m_fI_windsp(self):
         print("missing or unreadable value for windsp fuzzyI")
 
-    @Rule(NOT(tide1m(fuzzyI= anyof('uLow', 'dLow', 'vLow', 'Low', 'sLow',
+    @Rule(NOT(fact.tide1m(fuzzyI= anyof('uLow', 'dLow', 'vLow', 'Low', 'sLow',
         'average', 'sHigh', 'High', 'vHigh', 'dHigh', 'uHigh'))))
     def m_fI_tide1m(self):
         print("missing or unreadable value for tide1m fuzzyI")
 
-    @Rule(NOT(sea1m(fuzzyI= anyof('uLow', 'dLow', 'vLow', 'Low', 'sLow',
+    @Rule(NOT(fact.sea1m(fuzzyI= anyof('uLow', 'dLow', 'vLow', 'Low', 'sLow',
         'average', 'sHigh', 'High', 'vHigh', 'dHigh', 'uHigh'))))
     def m_fI_sea1m(self):
         print("missing or unreadable value for sea1m fuzzyI")
 
-    @Rule(NOT(seandbcM(fuzzyI= anyof('uLow', 'dLow', 'vLow', 'Low', 'sLow',
+    @Rule(NOT(fact.seandbcM(fuzzyI= anyof('uLow', 'dLow', 'vLow', 'Low', 'sLow',
         'average', 'sHigh', 'High', 'vHigh', 'dHigh', 'uHigh'))))
     def m_fI_seandbcM(self):
         print("missing or unreadable value for seandbcM fuzzyI")
 
-    @Rule(NOT(curveB(fuzzyI= anyof('uLow', 'dLow','vLow', 'Low', 'sLow',
+    @Rule(NOT(fact.curveB(fuzzyI= anyof('uLow', 'dLow','vLow', 'Low', 'sLow',
         'average', 'sHigh', 'High', 'vHigh' ,'dHigh', 'uHigh'))))
     def m_fI_curveB(self):
         print("missing or unreadable value for curveB fuzzyI")
 
-    @Rule(NOT(sea1mM(fuzzyI= anyof('uLow', 'dLow', 'vLow', 'Low', 'sLow',
+    @Rule(NOT(fact.sea1mM(fuzzyI= anyof('uLow', 'dLow', 'vLow', 'Low', 'sLow',
         'average', 'sHigh', 'High', 'vHigh', 'dHigh', 'uHigh'))))
     def m_fI_sea1mM(self):
         print("missing or unreadable value for sea1mM fuzzyI")
@@ -314,7 +228,7 @@ class MCB(KnowledgeEngine):
 
 ##Ecoforecast Rule #1: Coral-Bleaching-PtwA
 ##Description: Mass coral bleaching (high in-situ sea temperature + high light + low wind + low tide)
-    @Rule(parsurf(fuzzyI=anyof('High', 'vHigh', 'dHigh')),
+    @Rule(fact.parsurf(fuzzyI=anyof('High', 'vHigh', 'dHigh')),
             parsurf(fuzzyTod=anyof('midd', 'psun', 'dayl', 'aftn', 'all')),
             tide1m(fuzzyI=anyof('dLow', 'vLow', 'Low')),
             tide1m(fuzzyTod=anyof('morn', 'midd', 'psun', 'dayl', 'dayb',
@@ -331,7 +245,7 @@ class MCB(KnowledgeEngine):
 
 ##Ecoforecast Rule #2: Coral-Bleaching-PtwE
 ##Description: Mass coral bleaching (high 'shallow' sea temperature + high light + low wind + low tide)
-    @Rule(parsurf(fuzzyI=anyof('High', 'vHigh', 'dHigh')), 
+    @Rule(fact.parsurf(fuzzyI=anyof('High', 'vHigh', 'dHigh')), 
             parsurf(fuzzyTod=anyof('midd', 'dayl', 'all')),
             tide1m(fuzzyI=anyof('dLow', 'vLow', 'Low')),
             tide1m(fuzzyTod=anyof('morn', 'midd', 'psun', 'dayl', 'dayb',
@@ -348,7 +262,7 @@ class MCB(KnowledgeEngine):
 
 ##Ecoforecast Rule #3: Coral-Bleaching-PtwS
 ##Description: Mass coral bleaching (high SST + high light + low wind + low tide)
-    @Rule(parsurf(fuzzyI=anyof('High', 'vHigh', 'dHigh')),
+    @Rule(fact.parsurf(fuzzyI=anyof('High', 'vHigh', 'dHigh')),
             parsurf(fuzzyTod=anyof('midd', 'dayl', 'all')),
             tide1m(fuzzyI=anyof('dLow', 'vLow', 'Low')),
             tide1m(fuzzyTod=anyof('morn', 'midd', 'psun', 'dayl', 'dayb', 'aftn', 'all')),
@@ -363,7 +277,7 @@ class MCB(KnowledgeEngine):
 
 ##Ecoforecast Rule #4: Coral-Bleaching-PwA
 ## Description: Mass coral bleaching (high in-situ sea temperature + high light + low wind)
-    @Rule(parsurf(fuzzyI=anyof('High', 'vHigh', 'dHigh')),
+    @Rule(fact.parsurf(fuzzyI=anyof('High', 'vHigh', 'dHigh')),
             parsurf(fuzzyTod=anyof('midd', 'psun', 'dayl', 'aftn', 'all')),
             windsp(fuzzyI=anyof('dLow', 'vLow', 'Low')),
             windsp(fuzzyTod=anyof('morn', 'midd', 'psun', 'dayl', 'dayb', 'aftn', 'all')),
@@ -573,10 +487,11 @@ class MCB(KnowledgeEngine):
 
 
 
-def knowledge_engine( factlist):
-    e= MCB()
-    e.reset()
-    for f in factlist:
-        e.declare( f)
-    embed()
-    e.run()
+#def knowledge_engine( factlist):
+#    e= MCB()
+#    e.reset()
+#    embed()
+#    for f in factlist:
+#        e.declare( f)
+#    embed()
+#e    e.run()

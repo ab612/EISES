@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 ###script to hard code lower bound values for fuzzy intensities and fuzzy times.
 ####also stores corresponding string names of fuzzy values
 

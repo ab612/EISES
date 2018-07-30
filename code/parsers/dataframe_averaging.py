@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 ###pdsAveraging.py contains helper functions to calculate average values for
 ####time series of data stored in a pandas data frame
 ####usually called by insituTXT_2_JSON.py
@@ -24,9 +26,9 @@ def append3Mean( coulmnname, df):
     return df
 
 def removeExtraDateTime( df):
-    df= df.drop(columns=['YYYY', 'MM', 'DD', 'hh'])
+    df= df.drop(['YYYY', 'MM', 'DD', 'hh'], axis=1)
     if('mm' in df.columns.values):
-        df= df.drop(columns=['mm'])
+        df= df.drop(['mm'], axis=1)
     return df
 
 def cuttimeseries( df):
