@@ -2,7 +2,7 @@
 ### main function to call knowledge engine based ecoforecast pipeline
 
 __author__= "Madison.Soden"
-__date__= "Thu Jul 26, 2018  12:46PM"
+__date__= "Thu Aug 02, 2018  02:16PM"
 __license__= "NA?"
 __email__= "madison.soden@gmail.com"
 __status__= "Production"
@@ -33,17 +33,17 @@ def main( factfilename, stationname, date=''):
             #put fact files into single fact list
             factlist= []
             with open("../data/fffacts/"+factfilename+'/'+date+"/airt.json", 'r') as fin:
-                factlist.append(json.load( fin, object_hook= airt_decoder))
+                factlist.append(json.load( fin, object_hook= fact.airt_decoder))
             with open("../data/fffacts/"+factfilename+'/'+date+"/barom.json", 'r') as fin:
-                factlist.append(json.load( fin, object_hook= barom_decoder))
+                factlist.append(json.load( fin, object_hook= fact.barom_decoder))
             with open("../data/fffacts/"+factfilename+'/'+date+"/seandbc.json", 'r') as fin:
-                factlist.append(json.load( fin, object_hook= seandbc_decoder))
+                factlist.append(json.load( fin, object_hook= fact.seandbc_decoder))
             with open("../data/fffacts/"+factfilename+'/'+date+"/winddir.json", 'r') as fin:
-                factlist.append(json.load( fin, object_hook= winddir_decoder))
+                factlist.append(json.load( fin, object_hook= fact.winddir_decoder))
             with open("../data/fffacts/"+factfilename+'/'+date+"/windgu.json", 'r') as fin:
-                factlist.append(json.load( fin, object_hook= windgu_decoder))
+                factlist.append(json.load( fin, object_hook= fact.windgu_decoder))
             with open("../data/fffacts/"+factfilename+'/'+date+"/windsp.json", 'r') as fin:
-                factlist.append(json.load( fin, object_hook= windsp_decoder))
+                factlist.append(json.load( fin, object_hook= fact.windsp_decoder))
             #call knowledge engine to process analyze facts
             ke.knowledge_engine( factlist)
             return
@@ -64,12 +64,5 @@ def main( factfilename, stationname, date=''):
             factlist= factlist + json.load( fin, object_hook= fact.windsp_decoder)
         
         #call knowledge engine to process analyze facts
-        e = ke.MCB()
-        e.reset()
-        embed()
-        for f in factlist:
-            e.declare(f)
-
-        embed()
-        e.run()
+        ke.knowledge_engine( factlist)
         return 

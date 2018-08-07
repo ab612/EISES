@@ -5,7 +5,7 @@
 #       any ecoforecast. Not just MCB for MLRF1
 
 __author__= "Madison.Soden" 
-__date__= "Thu Jul 26, 2018  02:35PM"
+__date__= "Tue Aug 07, 2018  01:54PM"
 __license__= "NA?"
 __email__= "madison.soden@gmail.com"
 __status__= "Production"
@@ -14,80 +14,66 @@ import pyknow as pk
 import pandas as pd
 import json
 import csv
-import rangedict as rdi
+import fuzzy_ranges_values as frv
 import os.path
 import numpy as np
 import datetime
 import os
 from IPython import embed
+import fact
+import fffunctions as fff
 
 def data2function( index):
 #dictionary function to return a call to fact type specific generating functions given a fact data frame abbreviation
     dataDict= {
-            'WDIR': winddirGen,
-            'WSPD': windspGen,
-            'GST': windguGen,
+            'WDIR': 'NA',
+            'WSPD': 'NA',
+            'GST': 'NA',
             'WVHT': 'NA',
             'DPD': 'NA',
             'APD': 'NA',
             'MWD': 'NA',
-            'PRES': baromGen,
-            'ATMP': airtGen,
-            'WTMP': seandbcGen,
+            'PRES': 'NA',
+            'ATMP': 'NA',
+            'WTMP': 'NA',
             'DEWP': 'NA',
             'VIS': 'NA', 
             'TIDE': 'NA',
-            'ATMPM': 'NA',
-            'WTMPM': 'NA'}
+            'ATMP_three_hour_mean': airtGen,
+            'WTMP_three_hour_mean': seandbcGen,
+            'PRES_three_hour_mean': baromGen, 
+            'GST_three_hour_mean': windguGen,
+            'WSPD_three_hour_mean': windspGen,
+            'WDIR_three_hour_mean': winddirGen}
     return dataDict. get( index, 'unregistered data time series')
 
 def data2fact( index):
     #return system fact type  name given a fact type data frame abbreviation
     dataDict= { 
-            'WDIR': 'winddir',
-            'WSPD': 'windsp',
-            'GST': 'windgu',
+            'WDIR': 'NA',
+            'WSPD': 'NA',
+            'GST': 'NA',
             'WVHT': 'NA',
             'DPD': 'NA',
             'APD': 'NA',
             'MWD': 'NA',
-            'PRES': 'barom',
-            'ATMP': 'airt',
-            'WTMP': 'seandbc',
+            'PRES': 'NA',
+            'ATMP': 'NA',
+            'WTMP': 'NA',
             'DEWP': 'NA',
             'VIS': 'NA', 
             'TIDE': 'NA',
-            'ATMPM': 'NA',
-            'WTMPM': 'NA'}
+            'ATMP_three_hour_mean': 'airt',
+            'WTMP_three_hour_mean': 'seandbc',
+            'PRES_three_hour_mean': 'barom',
+            'GST_three_hour_mean': 'windgu',
+            'WSPD_three_hour_mean': 'windsp',
+            'WDIR_three_hour_mean': 'winddir'}
     return dataDict. get( index, 'unregistered data time series')
 
 class MyException(Exception):
     pass
 
-#initialize fact types to be created
-class winddir(pk.Fact):
-    #wind direction
-    pass
-
-class windsp(pk.Fact):
-    #wind speed
-    pass
-
-class windgu(pk.Fact):
-    #wind gust
-    pass
-
-class barom(pk.Fact):
-    #barometric pressure
-    pass
-
-class airt(pk.Fact):
-    #air temperature
-    pass
-
-class seandbc(pk.Fact):
-    #sea temperature measured by ndbc
-    pass
 
 
 def factfactory( filen, stationn):
@@ -112,7 +98,7 @@ def factorySort( df, filen, stationn):
 
 def factory( datadf, datatype, filen, stationn):
     ##if there is no specific range list for [locus][facttype] exit factory function
-    if not rdi.ranges[stationn][data2fact(datatype)]:
+    if not frv.ranges[stationn][data2fact(datatype)]:
         #alert user of error
         assert MyException( 'datatype locus combination: '\
             +datatype+'/'+stationn+' does not have specified range file.\
@@ -136,25 +122,27 @@ def factory( datadf, datatype, filen, stationn):
         #convert index of type np.datetime to type datetime.datetime
         i=pd.Timestamp(index)
         i=pd.to_datetime(i)
-        #get int representation of fact intensity corresponding to current index value
+#        print(i.hour)
+#        if (i.hour%3!=0):
+#            break
+#        print(factlist)
+        #get  int representation of fact intensity corresponding to current index value
         intensity= datadf.iat[ indexloc]
-        #check if current index belongs in previous current date file
-        if (i.strftime('%m_%d_%y')==currdate):
-            #if so check that fact intensity is recorded i.e not missing data
-            if not np.isnan( intensity):
-                #and then add to facttype list
-                factlist.append( data2function(datatype)( intensity, i, stationn))
-        else: #otherwise
-            #save and export previous list of date specific facts using data type specific file names
-            factoryStore( factlist, data2fact(datatype), filen, currdate)
-            #then update current date
+        #check if current date is the same as previous date
+        if(i.strftime('%m_%d_%y')!=currdate): #if not
+            #create super periods for factlist
+            factlist= fff.make_super_periods( factlist)
+            #store list for previous date
+            factoryStore(factlist, data2fact(datatype), filen, currdate)
+            #update currdate tracker
             currdate= i.strftime('%m_%d_%y')
-            #and empty factlist
+            #clear factlist for new day
             factlist= []
-            #check fact intensity is recorded i.e. not missing data
-            if not np.isnan( intensity):
-                #add to new facttype list
-                factlist.append( data2function(datatype)(intensity, i, stationn))
+        #check that fact intensity is recorded for current date time (i.e not missing data)
+        if not np.isnan( intensity):
+            # if data is recorded create corresponding fact and add to current days fact list
+            factlist.append( data2function(datatype)(intensity, i, stationn))
+
 
 def factoryStore( factlist, factname, filen, date):
     #create directory for corresponding date if one does not already exist
@@ -168,17 +156,17 @@ def fuzzyTod( t):
     #round to nearest hour
     t= t.hour +t.minute//30
     #get lists of all fuzzy lower bounds(xcoor) and corresponding positions in list (ycoor) to use in interpolate function
-    xcoor= rdi.times['mlrf1'][0]
+    xcoor= frv.times['mlrf1'][0]
     ycoor= range(len( xcoor))
     #predict position of time intensity relative to fuzzy lower bounds
     y= np.floor( np.interp( t, xcoor, ycoor))
     #look up corresponding fuzzyTod string value
-    fuzzyTod=rdi.standardtime[ int(y)]
+    fuzzyTod=frv.standardtime[ int(y)]
     return fuzzyTod
 
 def fuzzyI( intensity, stationn, factn): 
     #get lists of all fuzzy lower bounds(xcoor) and corresponding positions in list (ycoor) to use in interpolate function
-    xcoor= rdi.ranges[ stationn][ factn][0]
+    xcoor= frv.ranges[ stationn][ factn][0]
     ycoor= range(len( xcoor))
     #predict position of time intensity relative to fuzzy lower bounds
     y= np.floor( np.interp( intensity, xcoor, ycoor, left=-99, right= 99))
@@ -189,7 +177,7 @@ def fuzzyI( intensity, stationn, factn):
     elif(y== 99):
         return 'uhigh'
     else: 
-        return rdi.ranges[ stationn][ factn][ 1][ y]
+        return frv.ranges[ stationn][ factn][ 1][ y]
 
 def winddirGen( intensity, dt, stationn):
     #generate wind direction type fact
@@ -197,7 +185,8 @@ def winddirGen( intensity, dt, stationn):
     fI= fuzzyI( intensity, stationn, 'winddir')
     ## calculating fuzzyTod
     fTod= fuzzyTod( dt.time())
-    return winddir(fuzzyI=fI, fuzzyTod= fTod, date= dt.strftime('%m/%d/%Y'), locus= stationn)
+    return fact.winddir(fuzzyI=fI, fuzzyTod= fTod, date= dt.strftime('%m/%d/%Y'),
+            locus= stationn, I= intensity, fact_type= 'winddir')
 
 def windspGen( intensity, dt, stationn):
     #generate wind speed type fact
@@ -205,7 +194,8 @@ def windspGen( intensity, dt, stationn):
     fI= fuzzyI( intensity, stationn, 'windsp')
     ## calculating fuzzyTod
     fTod= fuzzyTod( dt.time())
-    return windsp(fuzzyI=fI, fuzzyTod= fTod, date= dt.strftime('%m/%d/%Y'), locus= stationn)
+    return fact.windsp(fuzzyI=fI, fuzzyTod= fTod, date= dt.strftime('%m/%d/%Y'),
+            locus= stationn, I= intensity, fact_type= 'windsp')
 
 def windguGen( intensity, dt, stationn):
     #generate wind gust type fact
@@ -213,7 +203,8 @@ def windguGen( intensity, dt, stationn):
     fI= fuzzyI( intensity, stationn, 'windgu')
     ## calculating fuzzyTod
     fTod= fuzzyTod( dt.time())
-    return windgu(fuzzyI=fI, fuzzyTod= fTod, date= dt.strftime('%m/%d/%Y'), locus= stationn)
+    return fact.windgu(fuzzyI=fI, fuzzyTod= fTod, date= dt.strftime('%m/%d/%Y'),
+            locus= stationn, I= intensity, fact_type = 'windgu')
 
 def baromGen( intensity, dt, stationn):
     #generate barometric pressure type fact
@@ -221,7 +212,8 @@ def baromGen( intensity, dt, stationn):
     fI= fuzzyI( intensity, stationn, 'barom')
     ## calculating fuzzyTod
     fTod= fuzzyTod( dt.time())
-    return barom(fuzzyI=fI, fuzzyTod= fTod, date= dt.strftime('%m/%d/%Y'), locus= stationn)
+    return fact.barom(fuzzyI=fI, fuzzyTod= fTod, date= dt.strftime('%m/%d/%Y'),
+            locus= stationn, I= intensity, fact_type= 'barom')
 
 def airtGen( intensity, dt, stationn):
     #generate air temperature type fact
@@ -229,7 +221,8 @@ def airtGen( intensity, dt, stationn):
     fI= fuzzyI( intensity, stationn, 'airt')
     ## calculating fuzzyTod
     fTod= fuzzyTod( dt.time())
-    return airt(fuzzyI=fI, fuzzyTod= fTod, date= dt.strftime('%m/%d/%Y'), locus= stationn)
+    return fact.airt(fuzzyI=fI, fuzzyTod= fTod, date= dt.strftime('%m/%d/%Y'),
+            locus= stationn, I= intensity, fact_type= 'airt')
 
 def seandbcGen( intensity, dt, stationn):
     #generate sea temperature (NDBC) type fact
@@ -237,4 +230,5 @@ def seandbcGen( intensity, dt, stationn):
     fI= fuzzyI( intensity, stationn, 'seandbc')
     ## calculating fuzzyTod
     fTod= fuzzyTod( dt.time())
-    return seandbc(fuzzyI=fI, fuzzyTod= fTod, date= dt.strftime('%m/%d/%Y'), locus= stationn)
+    return fact.seandbc(fuzzyI=fI, fuzzyTod= fTod, date= dt.strftime('%m/%d/%Y'),
+            locus= stationn, I= intensity, fact_type= 'seandbc')

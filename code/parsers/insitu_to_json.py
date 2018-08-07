@@ -4,7 +4,7 @@
 #### fact factories to process
 
 __author__= "Madison.Soden"
-__date__= "Thu Jul 26, 2018  02:56PM"
+__date__= "Thu Aug 02, 2018  03:10PM"
 __license__= "NA?"
 __email__= "madison.soden@gmail.com"
 __status__= "Production"
@@ -21,7 +21,7 @@ def main(filename):
     # 1.PARSING txt file 
     ###########################################################
 
-    with open('/Users/soden/AOMLworkspace/mcb/data/mlrf1_insitu_data/'+ filename+'.txt', 'r') as fin:
+    with open('../data/mlrf1_insitu_data/'+ filename+'.txt', 'r') as fin:
         data = fin.read().splitlines(True)
     header= data[0]
     units= data[1]
@@ -135,7 +135,10 @@ def main(filename):
     ##use every third column when accessing means
     df= append3Mean( 'ATMP', df)
     df= append3Mean('WTMP', df)
-
+    df= append3Mean('PRES', df)
+    df= append3Mean('GST', df)
+    df= append3Mean('WSPD', df)
+    df=  append3Mean('WDIR', df)
 
     #################################################################
     # 3. PUTTING DATA FRAME INTO JSON FILE
@@ -143,7 +146,7 @@ def main(filename):
 
     ##Creating json file
     jsondf= df.to_json(orient='split')
-    with open('/Users/soden/AOMLworkspace/mcb/data/mlrf1_insitu_data/'+filename+'.json', 'w') as f:
+    with open('../data/mlrf1_insitu_data/'+filename+'.json', 'w') as f:
         f.write(jsondf)
 
 #TO READ JSON string file

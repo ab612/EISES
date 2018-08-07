@@ -4,7 +4,7 @@
 ####also stores corresponding string names of fuzzy values
 
 __author__= "Madison.Soden"
-__date__= "Thu Jul 26, 2018  02:28PM"
+__date__= "Tue Aug 07, 2018  01:29PM"
 __license__= "NA?"
 __email__= "madison.soden@gmail.com"
 __status__= "Production"
@@ -21,9 +21,7 @@ ranges= {}
 ranges['mlrf1']= {}
 
 ranges['mlrf1']['parsurf']= [[ 0, 50, 100, 300, 500, 700, 800, 1100, 1300, 1600], standardfuzzy]
-ranges['mlrf1']['windsp']= []
 ranges['mlrf1']['tide1m']= []
-#ranges['mlrf1']['seandbc']= [[ 15, 17, 19, 21, 24, 29, 31.4, 32, 33, 34], standardfuzzy]
 ranges['mlrf1']['seandbc']= [[ 15, 17, 19, 21, 24, 29, 30, 31, 31.66, 32.5], standardfuzzy]
 ranges['mlrf1']['sea1m']= [[ 15, 17, 19, 21, 24, 30.1, 30.2, 30.4, 30.8, 32.1], standardfuzzy]
 ranges['mlrf1']['curveB']= []
@@ -56,8 +54,7 @@ ranges['mlrf1']['photoAccum']= [[ 100, 200, 250, 300, 330, 400, 420, 440, 500, 6
 ranges['mlrf1']['satChlorA']= [[ 0.01, 0.1, 0.2, 0.5, 0.7, 1.2, 1.4, 2, 4, 6], standardfuzzy]
 ranges['mlrf1']['surfcurUmin']= [[ -300, -230, -160, -100, -50, 30, 60, 90, 120, 200], standardfuzzy]
 
-#standardtime= ['even', 'midn', 'pdawn', 'dawn', 'morn', 'midd', '????','psun', 'suns']
-standardtime= ['even', 'midn', 'pdawn', 'dawn', 'morn', 'midd', 'psun', 'suns']
+standardtime= ['even', 'midn', 'pdaw', 'dawn', 'morn', 'midd', 'psun', 'suns']
 quartertime= ['nite', 'dayb', 'aftn', 'dayl', 'all']
 
 times= {}

@@ -5,7 +5,7 @@
 ####usually called by insituTXT_2_JSON.py
 
 __author__= "Madison.Soden"
-__date__= "Tue Jul 24, 2018  04:25PM"
+__date__= "Thu Aug 02, 2018  04:03PM"
 __license__= "NA?"
 __email__= "madison.soden@gmail.com"
 __status__= "Production"
@@ -14,15 +14,20 @@ import pandas as pd
 import json 
 import datetime
 import numpy as np
-
+from IPython import embed
 
 def cleanDataframe( df):
     df= df.reindex(pd.date_range( df.index[1], df.index[-1], freq='H'))
     return df
 
-def append3Mean( coulmnname, df):
+def append3Mean( columnname, df):
 # every third column should be used to avoid overlapping means
-    df[coulmnname +'M']= df.rolling(window=3, min_periods= 1)[coulmnname].mean()
+    timeseries= df.rolling(window=3, min_periods= 1)[columnname].mean()
+    #timeseries= df[columnname]
+    timeseries= timeseries.asfreq('3H')
+    timeseries= timeseries.reindex(df.index.values)
+    timeseries.name= columnname+'_three_hour_mean'
+    df[columnname+'_three_hour_mean'] = timeseries
     return df
 
 def removeExtraDateTime( df):
