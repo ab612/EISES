@@ -15,9 +15,6 @@ import json
 import datetime
 import numpy as np
 from IPython import embed
-:q
-
-:q
 
 def cleanDataframe( df):
     df= df.reindex(pd.date_range( df.index[1], df.index[-1], freq='H'))
@@ -27,7 +24,7 @@ def MperS_Knots( x):
     """function to convert meters per second to knots"""
     return float(x/0.51444444444)
 
-def convert_MS_to_Knots( df) 
+def convert_MS_to_Knots( df): 
     df["WSPD"]= df["WSPD"].apply(MperS_Knots)
     return df
 
