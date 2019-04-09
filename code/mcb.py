@@ -13,6 +13,7 @@ import kemcb as ke
 import json
 import os
 import os.path
+import glob
 from  parsers import insitu_to_json
 from IPython import embed
 import fact
@@ -27,8 +28,12 @@ def main(  factfilename, stationname, lookUpDate=None, run_ff=False):
         isRT = True
 
     fact_dir_name= factfilename[:5]
+    fact_year_name= factfilename[-4:]
+    glob_string= "../data/facts/"+fact_dir_name+"/"+fact_year_name+"/*/*.json"
 
-    if not(os.path.isdir('../data/facts/'+fact_dir_name)) or run_ff or isRT:
+    fact_files_list= glob.glob(glob_string)
+
+    if not(fact_files_list) or run_ff or isRT:
         #parse insitu txt file and save as json file
         insitu_to_json.main( factfilename, isRT)
         #call fact factory to generate facts

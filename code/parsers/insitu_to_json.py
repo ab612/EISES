@@ -14,7 +14,7 @@ import json
 import datetime
 import numpy as np
 from .dataframe_averaging import * 
-import ipdb
+#import ipdb
 
 def main( filename, isRT):
     ###########################################################
@@ -144,10 +144,10 @@ def main( filename, isRT):
     #drop extra datetime info columns now that information is stored in index
     df= removeExtraDateTime( df)
 
-    ipdb.set_trace()
+    #ipdb.set_trace()
     #convert WSPD from m/s to knots/s 
     df= convert_MS_to_Knots( df)
-    ipdb.set_trace()
+    #ipdb.set_trace()
 
     #create 3 hour mean time series
     ##use every third column when accessing means
