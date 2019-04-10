@@ -40,4 +40,5 @@ Thumbs.db
 ####################
 __pycache__/
 docs/
-
+*.swp
+*.pyc
