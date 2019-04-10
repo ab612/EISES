@@ -106,10 +106,10 @@ def main(  factfilename, stationname, lookUpDate=None, run_ff=False):
         #alertDict['alerts'] = ke.knowledge_engine( factlist)
         SRI[date_iterator] = ke.knowledge_engine( factlist)
 
-    if not os.path.exists(os.path.dirname('../data/SRI/')):
-        os.makedirs(os.path.dirname('../data/SRI/'))
+    if not os.path.exists(os.path.dirname('../data/SRI/'+stationname+'/')):
+        os.makedirs(os.path.dirname('../data/SRI/'+stationname+'/'))
 
-    with open('../data/SRI/'+stationname+year+'.csv', mode='w') as sri_file:
+    with open('../data/SRI/'+stationname+"/"+year+'.csv', mode='w') as sri_file:
         sri_writer = csv.writer(sri_file, delimiter=',')
         for date_iterator in factdatefiles:
             sri_writer.writerow([date_iterator, SRI[date_iterator]])

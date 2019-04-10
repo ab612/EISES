@@ -606,7 +606,7 @@ def knowledge_engine( factlist):
     e= MCB()
     e.reset()
     if len(factlist) == 0:
-        return -99
+        return 0
     for f in factlist:
         e.declare( f)
     e.run()
