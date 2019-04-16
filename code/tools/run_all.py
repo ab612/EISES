@@ -1,10 +1,10 @@
-import sys
-sys.path.append("..")
+import os.path
 import mcb
 
 yl= range(1987,2018)
 ll= ['mlrf1', 'fwyf1', 'sanf1', 'smkf1'] 
 for location in ll:
     for year in yl:
-        mcb.main("mlrf1h"+str(year), location, "year", run_ff= True)
-
+        file_path = "../data/data/"+location+"h"+str(year)+".txt"
+        if os.path.isfile(file_path):
+            mcb.main(location+'h'+str(year), location, "year", run_ff= True)

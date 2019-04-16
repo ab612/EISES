@@ -45,7 +45,8 @@ def main(  factfilename, stationname, lookUpDate=None, run_ff=False):
         factdatefiles = [f for f in
                 os.listdir("../data/facts/"+fact_dir_name+'/'+year) if os.path.isdir(os.path.join("../data/facts/"+fact_dir_name+'/'+year, f))]
     elif (not isinstance(lookUpDate, list)):
-        print("Please input list of strings for 3rd function argument. Alternatively input 'year' to run a coral forecast on the entire year\n")
+        print("Please input list of strings for 3rd function\
+                argument(MM_DD_YYYY). Alternatively input 'year' to run a coral forecast on the entire year\n")
         return
     else:
         year= lookUpDate[0][-2:]
