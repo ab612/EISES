@@ -45,7 +45,7 @@ def data2function( index):
             'GST_three_hour_mean': 'NA',
             'WSPD_three_hour_mean': windspGen,
             'WDIR_three_hour_mean': 'NA',
-            'TIDE_three_hour_mean': tide1mGen,
+            'TIDE_three_hour_mean': 'NA', #tide1mGen,
             'WSPD_three_day_mean': windsp3dayGen,
             'WTMP_30day_rolling_mean': seandbcMGen}
     return dataDict. get( index, 'unregistered data time series')
@@ -72,7 +72,7 @@ def data2fact( index):
             'GST_three_hour_mean': 'NA',
             'WSPD_three_hour_mean': 'windsp',
             'WDIR_three_hour_mean': 'NA',
-            'TIDE_three_hour_mean': 'tide1m',
+            'TIDE_three_hour_mean': 'NA', #'tide1m',
             'WSPD_three_day_mean': 'windsp3day',
             'WTMP_30day_rolling_mean': 'seandbcM'}
     return dataDict. get( index, 'unregistered data time series')
