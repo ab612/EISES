@@ -166,7 +166,6 @@ def main( filename, isRT):
     #################################################################
     # 3. PUTTING DATA FRAME INTO JSON FILE
     #################################################################
-    #####################################################################################ipdb.set_trace() 
     ##Creating json file
     jsondf= df.to_json(orient='split')
     with open('../data/data/'+filename+'.json', 'w') as f:

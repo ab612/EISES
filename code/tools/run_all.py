@@ -8,3 +8,5 @@ for location in ll:
         file_path = "../data/data/"+location+"h"+str(year)+".txt"
         if os.path.isfile(file_path):
             mcb.main(location+'h'+str(year), location, "year", run_ff= True)
+        else: 
+            raise ValueError("unable to find file ../data/data/"+location+"h"+str(year)+".txt")

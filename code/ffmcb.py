@@ -181,9 +181,9 @@ def fuzzyI( intensity, stationn, factn):
     y= int( y)
     #look up corresponding fuzzyI string value
     if(y== -99):
-        return 'ulow'
+        return 'uLow'
     elif(y== 99):
-        return 'uhigh'
+        return 'uHigh'
     else: 
         return frv.ranges[ stationn][ factn][ 1][ y]
 
