@@ -99,12 +99,7 @@ def main(  factfilename, stationname, lookUpDate=None, run_ff=False):
         except:
             pass #print('windsp data does not exist for: '+ date_iterator)
         #call knowledge engine to process analyze facts
-        alertDict['sName'] = stationname
         currentDT = datetime.datetime.now()
-        alertDict['runDate'] = currentDT.strftime( '%m_%d_%Y')
-        alertDict['alertDate'] = date_iterator
-        alertDict['forecastType'] = "MassCoralBleaching"
-        #alertDict['alerts'] = ke.knowledge_engine( factlist)
         SRI[date_iterator] = ke.knowledge_engine( factlist)
 
     if not os.path.exists(os.path.dirname('../data/SRI/'+stationname+'/')):

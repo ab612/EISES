@@ -14,9 +14,8 @@ import json
 import datetime
 import numpy as np
 from .dataframe_averaging import * 
-#import ipdb
 
-def main( filename, isRT):
+def main( filename):
     ###########################################################
     # 1.PARSING txt file 
     ###########################################################
@@ -37,8 +36,6 @@ def main( filename, isRT):
         data=data[2:]
 
     ##parsing the rest of data into properly formatted lists
-    if(isRT):
-        data= data[::-1]
     datal= len(data)
     i=0
     while (i < datal):
