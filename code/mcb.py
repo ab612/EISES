@@ -81,10 +81,10 @@ def main( stationName, lookUpDate, run_ff=False):
         factdatefiles = [
                 f for f in os.listdir("../data/facts/"+stationName+'/'+year)
                 if os.path.isdir(os.path.join("../data/facts/"+stationName+'/'+year, f))]
-        if (len(factdatefiles)!=364) and (len(factdatefiles)!=365): 
-            filepath= os.path.join("../data/facts/", stationName)
-            print("Please rerun program with 3rd function argument as 'True' to regenerate fact files.\n")
-            raise FileNotFoundError("There are too many or to few date directories in ", filepath)
+        #if (len(factdatefiles)!=364) and (len(factdatefiles)!=365): 
+        #    filepath= os.path.join("../data/facts/", stationName, year)
+        #    print("Please rerun program with 3rd function argument as 'True' to regenerate fact files.\n")
+        #    raise FileNotFoundError("There are too many or to few date directories in ", filepath)
     elif (engine_case == 'dates'):
         factdatefiles = lookUpDate
 
