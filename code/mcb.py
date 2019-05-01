@@ -33,9 +33,9 @@ def check_timeframe( lookUpDate):
     ## identifying which function to call to run knowledge engine
     if isinstance(lookUpDate, list):
         if lookUpDate and all(isinstance(s, str) for s in lookUpDate):
-            if all(re.match("^(0|1)[1-9]_(0|1|2|3)[0-9]_(19|20)(8|9|0|1)[0-9]$", s) for s in lookUpDate):
+            if all(re.match("^(0[1-9]|1[0-2])_(0|1|2|3)[0-9]_(19(8|9)[0-9]|20(0|1)[0-9])$", s) for s in lookUpDate):
                 return lookUpDate[0][-4:], "dates" #call date iterator
-            else: 
+            else:
                  raise ValueError( "3rd function argument must be a list of strings in  the format MM_DD_YYYY. For years between 1987-2018\n")
         else:
             raise ValueError( "3rd function argument must be a none empty list of strings. Of the format MM_DD_YYYY for years 1987-2018)\n")
@@ -63,20 +63,22 @@ def create_facts( stationName, year):
     ff.factfactory( factFileName, stationName) #call fact factory to generate facts
 
 def main( stationName, lookUpDate, run_ff=False):
-    
-    year, engine_case= check_timeframe(lookUpDate)    
-    
+    print("Checking for available data files.")
+    year, engine_case= check_timeframe(lookUpDate)
+
     check_file_path(stationName, year)
 
+    print("Data location confirmed.\nRunning Fact Factory.")
     if run_ff: #run fact factory if asked to
         create_facts( stationName, year)
     else:  #checking to see if required fact data files exist
         glob_string= "../data/facts/"+stationName+"/"+year+"/*/*.json"
         fact_files_list= glob.glob(glob_string)
-        if not(fact_files_list): 
+        if not(fact_files_list):
             #if the directory supposed to be containing fact files is empty rerun parser and ff
             create_facts( stationName, year)
 
+    print("Facts Created.")
     if (engine_case == 'year'):
         factdatefiles = [
                 f for f in os.listdir("../data/facts/"+stationName+'/'+year)
@@ -88,6 +90,7 @@ def main( stationName, lookUpDate, run_ff=False):
     elif (engine_case == 'dates'):
         factdatefiles = lookUpDate
 
+    alertDict= {}
     SRI = {}
     dateI = "01_01_"+year
     yearF = int(year) +1
@@ -101,10 +104,11 @@ def main( stationName, lookUpDate, run_ff=False):
 
     factdatefiles= sorted(factdatefiles)
 
+
+    print("Running Knowledge Engine.\n")
     for date_iterator in factdatefiles:
         #put fact files into single fact list
         factlist= []
-        alertDict = {}
         try:
             with open("../data/facts/"+stationName+'/'+year+'/'+date_iterator+"/tide1m.json", 'r') as fin:
                 factlist= factlist + json.load( fin, object_hook= fact.tide1m_decoder)
@@ -132,7 +136,12 @@ def main( stationName, lookUpDate, run_ff=False):
             pass #print('windsp data does not exist for: '+ date_iterator)
 
         #call knowledge engine to process analyze facts
+        
+        #SRI[date_iterator], alertDictapp = ke.knowledge_engine( factlist)
+        
         SRI[date_iterator] = ke.knowledge_engine( factlist)
+        #alertDict.update(alertDictapp)
+    print("Knowledge Engine Done.\nExporting SRI data.")
 
     if not os.path.exists(os.path.dirname('../data/SRI/'+stationName+'/')):
         os.makedirs(os.path.dirname('../data/SRI/'+stationName+'/'))
@@ -141,3 +150,4 @@ def main( stationName, lookUpDate, run_ff=False):
         sri_writer = csv.writer(sri_file, delimiter=',')
         for date_iterator in factdatefiles:
             sri_writer.writerow([date_iterator, SRI[date_iterator]])
+    print("Data exported.\n")

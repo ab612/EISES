@@ -136,13 +136,27 @@ class MCB( pk.KnowledgeEngine):
         added, removed = self.get_activations()
         self.strategy.update_agenda(self.agenda, added, removed)
     
-    def alert_add( self, ruleName, factList):
-        factDict = {}
-        for i in factList:
-            factI = factList[I]
+    def alert_add( self, ruleName, rule_des, sri, factList):
+        date= factList[0]['date']
+        i= 0
+        #ARE the facts passed by reference of by value
+        #ipdb break 
+        #adjust fact
+        #step out to the main knowledge engine 
+        #check fact
+        alertName= date+ruleName+"#"+str(i)
+        while True:
+            if alertName in self.alerts.keys():
+                i+=1
+                alertName= alertName[:-1]+str(i)
+            else:
+                break
 
-        self.alerts["ruleName"]= ruleName
-        self.alerts['facts'] = factDict
+        self.alerts[alertName]= {}
+        self.alerts[alertName]['rule_name']= ruleName
+        self.alerts[alertName]['rule_description']= rule_des
+        self.alerts[alertName]['SRI']= sri
+        self.alerts[alertName]['fact_list']= factList
 
 
 ###OLD KE tools
@@ -301,7 +315,9 @@ class MCB( pk.KnowledgeEngine):
         fact_display(tide1m)
         fact_display(windsp)
         fact_display(seandbc)
-        self.SRI += sri_calc(parsurf) +sri_calc(tide1m) +sri_calc(windsp) +sri_calc(seandbc)
+        sri = sri_calc(parsurf) +sri_calc(tide1m) +sri_calc(windsp) +sri_calc(seandbc) 
+        self.SRI += sri
+        self.alert_add( 'mcb_PtwA', 'Mass coral bleaching (high in-situ sea temperature + high light + low wind + low tide)', sri, [ parsurf, tide1m, windsp, seandbc])
         self.retract( parsurf)
         self.retract( tide1m)
         self.retract( windsp)
@@ -319,7 +335,9 @@ class MCB( pk.KnowledgeEngine):
         fact_displary( tide1m)
         fact_display( windsp)
         fact_display( sea1m)
-        self.SRI += sri_calc(parsurf) +sri_calc(tide1m) +sri_calc(windsp) +sri_calc(sea1m)
+        sri= sri_calc(parsurf) +sri_calc(tide1m) +sri_calc(windsp) +sri_calc(sea1m)
+        self.SRI += sri
+        self.alert_add( 'mcb_PtwE', 'Mass coral bleaching (high \'shallow\' sea temperature + high light + low wind + low tide)', sri, [ parsurf, tide1m, windsp, sea1m])
         self.retract( parsurf)
         self.retract( tide1m)
         self.retract( windsp)
@@ -337,7 +355,9 @@ class MCB( pk.KnowledgeEngine):
         fact_display( tide1m)
         fact_display( windsp)
         fact_display( sst)
-        self.SRI += sri_calc(parsurf) +sri_calc(tide1m) +sri_calc(windsp) +sri_calc(sst)
+        sri= sri_calc(parsurf) +sri_calc(tide1m) +sri_calc(windsp) +sri_calc(sst)
+        self.SRI += sri
+        self.alert_add( 'mcb_PtwS', 'Mass coral bleaching (high SST + high light + low wind + low tide)', sri, [ parsurf, tide1m, windsp, sst])
         self.retract( parsurf)
         self.retract( tide1m)
         self.retract( windsp)
@@ -353,7 +373,9 @@ class MCB( pk.KnowledgeEngine):
         fact_display( parsurf)
         fact_display( windsp)
         fact_display( seandbc)
-        self.SRI += sri_calc(parsurf) +sri_calc(windsp) +sri_calc(seandbc)
+        sri= sri_calc(parsurf) +sri_calc(windsp) +sri_calc(seandbc)
+        self.SRI += sri
+        self.alert_add( 'mcb_PwA', 'Mass coral bleaching (high in-situ sea temperature + high light + low wind)', sri, [ parsurf, windsp, seandbc])
         self.retract( parsurf)
         self.retract( windsp)
         self.retract( seandbc)
@@ -368,7 +390,9 @@ class MCB( pk.KnowledgeEngine):
         fact_display( tide1m)
         fact_display( windsp)
         fact_display( seandbc)
-        self.SRI += sri_calc(tide1m) +sri_calc(windsp) +sri_calc(seandbc)
+        sri= sri_calc(tide1m) +sri_calc(windsp) +sri_calc(seandbc)
+        self.SRI += sri
+        self.alert_add( 'mcb_twA', 'Mass coral bleaching (high in-situ sea temperature + low wind + low tide)', sri, [ tide1m, windsp, seandbc])
         self.retract( tide1m)
         self.retract( windsp)
         self.retract( seandbc)
@@ -383,7 +407,9 @@ class MCB( pk.KnowledgeEngine):
         fact_display( parsurf)
         fact_display( windsp)
         fact_display( sea1m)
-        self.SRI += sri_calc(parsurf) +sri_calc(windsp) +sri_calc(sea1m)
+        sri= sri_calc(parsurf) +sri_calc(windsp) +sri_calc(sea1m)
+        self.SRI += sri
+        self.alert_add( 'mcb_PwE', 'Mass coral bleaching (high \'shallow\' sea temperature + high light + low wind)', sri, [ parsurf, windsp, sea1m])
         self.retract( parsurf)
         self.retract( windsp)
         self.retract( sea1m)
@@ -398,7 +424,9 @@ class MCB( pk.KnowledgeEngine):
         fact_display( tide1m)
         fact_display( windsp)
         fact_display( sea1m)
-        self.SRI += sri_calc(tide1m) +sri_calc(windsp) +sri_calc(sea1m)
+        sri= sri_calc(tide1m) +sri_calc(windsp) +sri_calc(sea1m)
+        self.SRI += sri
+        self.alert_add( 'mcb_twE', 'Mass coral bleaching (high \'shallow\' sea temperature + low wind + low tide)', sri, [ tide1m, windsp, sea1m])
         self.retract( tide1m)
         self.retract( windsp)
         self.retract( sea1m)
@@ -414,7 +442,9 @@ class MCB( pk.KnowledgeEngine):
         fact_display( parsurf)
         fact_display( windsp)
         fact_display( sst)
-        self.SRI += sri_calc(parsurf) +sri_calc(windsp) +sri_calc(sst)
+        sri= sri_calc(parsurf) +sri_calc(windsp) +sri_calc(sst)
+        self.SRI += sri
+        self.alert_add( 'mcb_PwS', 'Mass coral bleaching (high SST + high light + low wind)', sri, [ parsurf, windsp, sst])
         self.retract( parsurf)
         self.retract( windsp)
         self.retract( sst)
@@ -429,7 +459,9 @@ class MCB( pk.KnowledgeEngine):
         fact_display( tide1m)
         fact_display( windsp)
         fact_display( sst)
-        self.SRI += sri_calc(tide1m) +sri_calc(windsp) +sri_calc(sst)
+        sri= sri_calc(tide1m) +sri_calc(windsp) +sri_calc(sst)
+        self.SRI += sri
+        self.alert_add( 'mcb_twS', 'Mass coral bleaching (high SST + low wind + low tide)', sri, [ tide1m, windsp, sst])
         self.retract( tide1m)
         self.retract( windsp)
         self.retract( sst)
@@ -442,7 +474,9 @@ class MCB( pk.KnowledgeEngine):
         print("\n- Coral-Bleaching-w3A fired")
         fact_display( windsp3day)
         fact_display( seandbc)
-        self.SRI += sri_calc(windsp3day) +sri_calc(seandbc)
+        sri= sri_calc(windsp3day) +sri_calc(seandbc)
+        self.SRI += sri
+        self.alert_add( 'mcb_w3A', 'Mass coral bleaching (high in-situ sea temperature + doldrums)', sri, [ windsp3day, seandbc])
         self.retract( windsp3day)
         self.retract( seandbc)
 
@@ -454,7 +488,9 @@ class MCB( pk.KnowledgeEngine):
         print("\n- Coral-Bleaching-PA fired")
         fact_display( parsurf)
         fact_display( seandbc)
-        self.SRI += sri_calc(parsurf) +sri_calc( seandbc)
+        sri = sri_calc(parsurf) +sri_calc( seandbc)
+        self.SRI += sri
+        self.alert_add( 'mcb_PA', 'Mass coral bleaching (very high in-situ sea temperature + very high light)', sri, [ parsurf, seandbc])
         self.retract( parsurf)
         self.retract( seandbc)
 
@@ -466,7 +502,9 @@ class MCB( pk.KnowledgeEngine):
         print("\n- Coral-Bleaching-wA fired")
         fact_display( windsp)
         fact_display( seandbc)
-        self.SRI += sri_calc( windsp) +sri_calc(seandbc)
+        sri= sri_calc( windsp) +sri_calc(seandbc)
+        self.SRI += sri
+        self.alert_add( 'mcb_wA', 'Mass coral bleaching (very high in-situ sea temperature + very low wind)', sri, [ windsp, seandbc])
         self.retract( windsp)
         self.retract( seandbc)
 
@@ -478,7 +516,9 @@ class MCB( pk.KnowledgeEngine):
         print("\n- Coral-Bleaching-w3E fired")
         fact_display( windsp3day)
         fact_display( sea1m)
-        self.SRI += sri_calc( windsp3day) +sri_calc( sea1m)
+        sri= sri_calc( windsp3day) +sri_calc( sea1m)
+        self.SRI += sri
+        self.alert_add( 'mcb_w3E', 'Mass coral bleaching (high \'shallow\' sea temperature + doldrums)', sri, [ windsp3day, sea1m])
         self.retract( windsp3day)
         self.retract( sea1m)
 
@@ -490,7 +530,9 @@ class MCB( pk.KnowledgeEngine):
         print("\n- Coral-Bleaching-PE fired")
         fact_display( parsurf)
         fact_display( sea1m)
-        self.SRI += sri_calc( parsurf) +sri_calc( sea1m)
+        sri= sri_calc( parsurf) +sri_calc( sea1m)
+        self.SRI += sri
+        self.alert_add( 'mcb_PE', 'Mass coral bleaching (very high \'shallow\' sea temperature + very high light)', sri, [ parsurf, sea1m])
         self.retract( parsurf)
         self.retract( sea1m)
 
@@ -502,7 +544,9 @@ class MCB( pk.KnowledgeEngine):
         print("\n- Coral-Bleaching-wE fired")
         fact_display( windsp)
         fact_display( sea1m)
-        self.SRI += sri_calc( windsp) +sri_calc( sea1m)
+        sri= sri_calc( windsp) +sri_calc( sea1m)
+        self.SRI += sri
+        self.alert_add( 'mcb_wE', 'Mass coral bleaching (very high \'shallow\' sea temperature + very low wind)', sri, [ windsp, sea1m])
         self.retract( windsp)
         self.retract( sea1m)
 
@@ -514,7 +558,9 @@ class MCB( pk.KnowledgeEngine):
         print("\n- Coral-Bleaching-PS fired")
         fact_display( parsurf)
         fact_display( sst)
-        self.SRI += sri_calc( parsurf) +sri_calc( sst)
+        sri= sri_calc( parsurf) +sri_calc( sst)
+        self.SRI += sri
+        self.alert_add( 'mcb_PS', 'Mass coral bleaching (very high SST + very high light)', sri, [ parsurf, sst])
         self.retract( parsurf)
         self.retract( sst)
 
@@ -527,7 +573,9 @@ class MCB( pk.KnowledgeEngine):
         print("\n- Coral-Bleaching-wS fired")
         fact_display( windsp)
         fact_display( sst)
-        self.SRI += sri_calc( windsp) +sri_calc( sst)
+        sri= sri_calc( windsp) +sri_calc( sst)
+        self.SRI += sri
+        self.alert_add( 'mcb_wS', 'Mass coral bleaching (very high SST + very low wind)', sri, [ windsp, sst])
         self.retract( windsp)
         self.retract( sst)
 
@@ -538,7 +586,9 @@ class MCB( pk.KnowledgeEngine):
     def mcb_B(self, curveB):
         print("\n- Coral-Bleaching-B fired")
         fact_display( curveB)
-        self.SRI += sri_calc( curveB)
+        sri= sri_calc( curveB)
+        self.SRI += sri
+        self.alert_add( 'mcb_B', 'Mass coral bleaching (Berkelmans bleaching curve)', sri, [ curveB])
         self.retract( curveB)
 
 
@@ -548,7 +598,9 @@ class MCB( pk.KnowledgeEngine):
     def mcb_A(self, seandbc):
         print("\n- Coral-Bleaching-A fired")
         fact_display( seandbc)
-        self.SRI += sri_calc( seandbc)
+        sri= sri_calc( seandbc)
+        self.SRI += sri
+        self.alert_add( 'mcb_A', 'Mass coral bleaching (drastic high in-situ sea temperature)', sri, [ seandbc])
         self.retract( seandbc)
 
 
@@ -558,7 +610,9 @@ class MCB( pk.KnowledgeEngine):
     def mcb_BB(self, curveB):
         print("\n- Coral-Bleaching-BB fired")
         fact_display( curveB)
-        self.SRI += sri_calc( curveB)
+        sri= sri_calc( curveB)
+        self.SRI += sri
+        self.alert_add( 'mcb_BB', 'Mass coral mortality (>50%) for local sensitive species (Berkelmans)', sri, [curveB])
         self.retract( curveB)
 
 
@@ -568,7 +622,9 @@ class MCB( pk.KnowledgeEngine):
     def mcb_EM(self, sea1mM):
         print("\n- Coral-Bleaching-EM fired")
         fact_display( sea1mM)
-        self.SRI += sri_calc( sea1mM)
+        sri = sri_calc( sea1mM)
+        self.SRI += sri
+        self.alert_add( 'mcb_EM', 'Mass coral bleaching (high monthly mean \'shallow\' sea temperature)', sri, [sea1mM])
         self.retract( sea1mM)
 
 
@@ -578,7 +634,9 @@ class MCB( pk.KnowledgeEngine):
     def mcb_AM(self, seandbcM):
         print("\n- Coral-Bleaching-AM fired")
         fact_display( seandbcM)
-        self.SRI += sri_calc( seandbcM)
+        sri= sri_calc( seandbcM)
+        self.SRI += sri
+        self.alert_add( 'mcb_AM', 'Mass coral bleaching (high monthly mean in situ sea temperature)', sri, [seandbcM])
         self.retract( seandbcM)
 
 
@@ -588,7 +646,9 @@ class MCB( pk.KnowledgeEngine):
     def mcb_E(self, sea1m):
         print("\n- Coral-Bleaching-E fired")
         fact_display( sea1m)
-        self.SRI += sri_calc( sea1m)
+        sri= sri_calc( sea1m)
+        self.SRI += sri
+        self.alert_add( 'mcb_E', "Mass coral bleaching (drastic high \'shallow\' sea temperature)", sri, [sea1m])
         self.retract( sea1m)
 
 
@@ -598,7 +658,9 @@ class MCB( pk.KnowledgeEngine):
     def mcb_S(self, sst):
         print("\n- Coral-Bleaching-S fired")
         fact_display( sst)
-        self.SRI += sri_calc( sst)
+        sri= sri_calc( sst)
+        self.SRI += sri
+        self.alert_add( "mcb_S", "Mass coral bleaching (drastic high SST)", sri, [sst])
         self.retract( sst)
 
 
@@ -610,6 +672,4 @@ def knowledge_engine( factlist):
     for f in factlist:
         e.declare( f)
     e.run()
-    print("##########################################################\n", factlist[0]['date'], " SRI: ", e.SRI)
-    print("##########################################################\n")
-    return e.SRI
+    return e.SRI #, e.alerts

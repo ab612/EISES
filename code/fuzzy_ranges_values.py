@@ -60,8 +60,7 @@ ranges['smkf1']['seandbc']= [[16.8, 22.7, 24.1, 25, 25.3, 30.00, 30.30, 31.90, 3
 ranges['smkf1']['seandbcM']= [[15, 17, 19, 21, 24, 29.5, 30.23, 31.16, 31.28, 32.00], standardfuzzy]
 ranges['smkf1']['windsp']= [[00.00, 00.20, 00.65, 04.70, 10, 21, 33, 40, 64, 100], standardfuzzy]
 ranges['smkf1']['windsp3day']= [[00.70, 01.25, 03.80, 06.66, 10, 17, 22, 25, 30, 50], standardfuzzy]
-#ranges['smkf1']['tide1m']= [[9.0, 9.4, 10.0, 11.0, 11.5, 12.0, 12.5, 13.0, 14.0, 15.0], standardfuzzy]
-#MatLab Tide looks like it might create bugs in the fact factory. [-1.75, -1.06, -0.60, 00.10, 11.5, 12.0, 12.5, 13.0, 14.0, 15.0]
+#ranges['smkf1']['tide1m']= [[-1.75, -1.06, -0.60, 00.10, 11.5, 12.0, 12.5, 13.0, 14.0, 15.0], standardfuzzy]
 
 ranges['sanf1']= {}
 #Original Ranges
