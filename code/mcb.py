@@ -21,6 +21,7 @@ import datetime
 import csv
 import numpy as np
 import re
+import ipdb
 
 """ADD Functionality for multiple years to be specified as standalone dates or
 as multiple years EG:
@@ -136,12 +137,12 @@ def main( stationName, lookUpDate, run_ff=False):
             pass #print('windsp data does not exist for: '+ date_iterator)
 
         #call knowledge engine to process analyze facts
-        
-        #SRI[date_iterator], alertDictapp = ke.knowledge_engine( factlist)
-        
-        SRI[date_iterator] = ke.knowledge_engine( factlist)
-        #alertDict.update(alertDictapp)
+        alertDictapp= {}
+        returnList= ke.knowledge_engine( factlist)
+        SRI[date_iterator]=  returnList[0]
+        alertDict.update( returnList[1])
     print("Knowledge Engine Done.\nExporting SRI data.")
+    ipdb.set_trace()
 
     if not os.path.exists(os.path.dirname('../data/SRI/'+stationName+'/')):
         os.makedirs(os.path.dirname('../data/SRI/'+stationName+'/'))

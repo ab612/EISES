@@ -14,6 +14,7 @@ __status__= "Production"
 import pyknow as pk
 from IPython import embed
 import fact
+import ipdb;
 
 ###Fact Definition Documentation### 
     #fact names are declared as 'parsurf', 'sst', 'windsp', 'tide1m',
@@ -397,7 +398,7 @@ class MCB( pk.KnowledgeEngine):
         self.retract( windsp)
         self.retract( seandbc)
 
-##Ecoforecast Rule #6: Coral-Bleaching-PwE
+#Ecoforecast Rule #6: Coral-Bleaching-PwE
 ##Description: Mass coral bleaching (high 'shallow' sea temperature + high light + low wind)
     @pk.Rule(pk.AS.parsurf << fact.parsurf( fuzzyI=anyof('High', 'vHigh', 'dHigh'), fuzzyTod=anyof('midd', 'dayl', 'all')),
             pk.AS.windsp << fact.windsp( fuzzyI=anyof('dLow', 'vLow', 'Low'), fuzzyTod=anyof('morn', 'midd', 'psun', 'dayl', 'dayb', 'aftn', 'all')),
@@ -672,4 +673,5 @@ def knowledge_engine( factlist):
     for f in factlist:
         e.declare( f)
     e.run()
-    return e.SRI #, e.alerts
+    #ipdb.set_trace()
+    return [e.SRI, e.alerts]
