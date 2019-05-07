@@ -3,7 +3,7 @@
 ###mcb Ecoforecast prototype goal is to implement rules base from http://ecoforecast.coral.noaa.gov/index/0/MLRF1/model-detail&name=MASS-CORAL-BLEACHING and 'print' a forecast###
 
 __author__= "Madison Soden"
-__date__= "Thu Oct 11, 2018  04:02PM"
+__date__= "Tue May 07, 2019  05:24PM"
 __license__= "NA?"
 __email__= "madison.soden@gmail.com"
 __status__= "Production"
@@ -16,11 +16,11 @@ from IPython import embed
 import fact
 import ipdb;
 
-###Fact Definition Documentation### 
+###Fact Definition Documentation###
     #fact names are declared as 'parsurf', 'sst', 'windsp', 'tide1m',
     #'seandbc', 'sea1m', 'curveB', 'sea1mM', 'seandbcM', 'windsp3day'
 
-    #fuzzyI is a string containing a fuzzy (i.e. proxy) values for sst 
+    #fuzzyI is a string containing a fuzzy (i.e. proxy) values for sst
     #key = 'fuzzyI' / 0
     #fuzzy values can be 'uLow', 'dLow', 'vLow', 'Low', 'sLow', 'average', 'sHigh',
     # 'High', 'vHigh', 'dHigh', 'uHigh'
@@ -28,7 +28,7 @@ import ipdb;
     # time fuzzyI was recorded. Taken in eight 3 hour, then four 6 hour, then
     # two 12 hour , and one 24 hour time increments
     #key = 'fuzzyTod' and/or 1
-    #fuzzy values can be 
+    #fuzzy values can be
     # 'evening' - 'even' - 0000 to 0300
     # 'midnight' - 'midn' - 0300 to 0600
     # 'pre-dawn' - 'pdaw' - 0600 to 0900
@@ -37,20 +37,20 @@ import ipdb;
     # 'mid-day' - 'midd' - 1500 to 1800
     # 'pre-sunset' - 'psun' - 1800 to 21:00
     # 'sunset' - 'suns' - 2100 to 2400
-    # 
     # 'night-hours' - 'nite' - 0000 to 0900
     # 'dawn-morning' - 'dayb' - 0900 to 1500
     # 'afternoon' - 'aftn' - 1800 to 2400
     # 'daylight-hours' - 'dayl' - 0900 to 2400
     # 'all-day' - 'all' - 0300 to 0300
-    
+
     #date is a string containing the date that fuzzyI was calculated on in DDMMYYYY
-    #key = 'date' and/or 2 
-    
+    #key = 'date' and/or 2
+
     #locus is an string containing the abbreviated geographic location that
     #fuzzyI, fuzzyTod and date apply to.
     #key = 'locus' and/or 3
 
+###Helper functions###
 def fact_display( fact):
     ruleDict = {
         'parsurf': '    p    -    parsurf\t',
@@ -115,7 +115,6 @@ def sri_calc( fact):
     time_multiplier = t_multiplier.get( fact['fuzzyTod'])
     return intensity_multiplier*time_multiplier
 
-###Helper functions###
 def anyof(*values):
     return pk.P(lambda y: y in values)
 
@@ -136,14 +135,14 @@ class MCB( pk.KnowledgeEngine):
         #if not self.running:
         added, removed = self.get_activations()
         self.strategy.update_agenda(self.agenda, added, removed)
-    
+
     def alert_add( self, ruleName, rule_des, sri, factList):
         date= factList[0]['date']
         i= 0
         #ARE the facts passed by reference of by value
-        #ipdb break 
+        #ipdb break
         #adjust fact
-        #step out to the main knowledge engine 
+        #step out to the main knowledge engine
         #check fact
         alertName= date+ruleName+"#"+str(i)
         while True:
@@ -669,9 +668,9 @@ def knowledge_engine( factlist):
     e= MCB()
     e.reset()
     if len(factlist) == 0:
-        return 0
+        return 0, {}
     for f in factlist:
         e.declare( f)
     e.run()
     #ipdb.set_trace()
-    return [e.SRI, e.alerts]
+    return e.SRI, e.alerts

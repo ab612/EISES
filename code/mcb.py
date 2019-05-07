@@ -2,7 +2,7 @@
 ### main function to call knowledge engine based ecoforecast pipeline
 
 __author__= "Madison.Soden"
-__date__= "Tue Oct 30, 2018  03:06PM"
+__date__= "Tue May 07, 2019  05:15PM"
 __license__= "NA?"
 __email__= "madison.soden@gmail.com"
 __status__= "Production"
@@ -46,7 +46,7 @@ def check_timeframe( lookUpDate):
         else:
             raise ValueError("3rd function argument must be a string of the format YYYY for years 1987-2018.\n")
     else:
-        raise ValueError("For 3rd function argument please input list of strings MM_DD_YYYY for 3rd function argument. Alternatively, input a string YYYY to run a coral bleaching forecast on the entire year\n")
+        raise ValueError("for 3rd function argument please input list of strings MM_DD_YYYY for 3rd function argument. Alternatively, input a string YYYY to run a coral bleaching forecast on the entire year\n")
 
 def check_file_path( stationName, year):
     if not(os.path.isdir( os.path.join("../data/facts", stationName))):
@@ -84,7 +84,7 @@ def main( stationName, lookUpDate, run_ff=False):
         factdatefiles = [
                 f for f in os.listdir("../data/facts/"+stationName+'/'+year)
                 if os.path.isdir(os.path.join("../data/facts/"+stationName+'/'+year, f))]
-        #if (len(factdatefiles)!=364) and (len(factdatefiles)!=365): 
+        #if (len(factdatefiles)!=364) and (len(factdatefiles)!=365):
         #    filepath= os.path.join("../data/facts/", stationName, year)
         #    print("Please rerun program with 3rd function argument as 'True' to regenerate fact files.\n")
         #    raise FileNotFoundError("There are too many or to few date directories in ", filepath)
@@ -137,10 +137,11 @@ def main( stationName, lookUpDate, run_ff=False):
             pass #print('windsp data does not exist for: '+ date_iterator)
 
         #call knowledge engine to process analyze facts
-        alertDictapp= {}
-        returnList= ke.knowledge_engine( factlist)
-        SRI[date_iterator]=  returnList[0]
-        alertDict.update( returnList[1])
+        #daySRI= ke.knowledge_engine( factlist)
+        daySRI, *alertDictapp= ke.knowledge_engine( factlist)
+        #ipdb.set_trace()
+        SRI[date_iterator]=  daySRI
+        alertDict.update( alertDictapp[0])
     print("Knowledge Engine Done.\nExporting SRI data.")
     ipdb.set_trace()
 
