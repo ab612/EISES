@@ -2,7 +2,7 @@
 ### main function to call knowledge engine based ecoforecast pipeline
 
 __author__= "Madison.Soden"
-__date__= "Tue May 07, 2019  05:15PM"
+__date__= "Wed May 08, 2019  02:48PM"
 __license__= "NA?"
 __email__= "madison.soden@gmail.com"
 __status__= "Production"
@@ -32,6 +32,7 @@ as multiple years EG:
 
 def check_timeframe( lookUpDate):
     ## identifying which function to call to run knowledge engine
+    ## and what year knowledge engine is being run for
     if isinstance(lookUpDate, list):
         if lookUpDate and all(isinstance(s, str) for s in lookUpDate):
             if all(re.match("^(0[1-9]|1[0-2])_(0|1|2|3)[0-9]_(19(8|9)[0-9]|20(0|1)[0-9])$", s) for s in lookUpDate):
@@ -64,12 +65,13 @@ def create_facts( stationName, year):
     ff.factfactory( factFileName, stationName) #call fact factory to generate facts
 
 def main( stationName, lookUpDate, run_ff=False):
-    print("Checking for available data files.")
+
+    print("["+stationName+"][XXXX]Checking for available data files.")
     year, engine_case= check_timeframe(lookUpDate)
-
     check_file_path(stationName, year)
+    print("["+stationName+"]["+year+"]Data location confirmed.")
 
-    print("Data location confirmed.\nRunning Fact Factory.")
+    print("["+stationName+"]["+year+"]Running Fact Factory.")
     if run_ff: #run fact factory if asked to
         create_facts( stationName, year)
     else:  #checking to see if required fact data files exist
@@ -78,8 +80,9 @@ def main( stationName, lookUpDate, run_ff=False):
         if not(fact_files_list):
             #if the directory supposed to be containing fact files is empty rerun parser and ff
             create_facts( stationName, year)
+    print("["+stationName+"]["+year+"]Facts Created.")
 
-    print("Facts Created.")
+    print("["+stationName+"]["+year+"]Loading Facts.")
     if (engine_case == 'year'):
         factdatefiles = [
                 f for f in os.listdir("../data/facts/"+stationName+'/'+year)
@@ -91,6 +94,7 @@ def main( stationName, lookUpDate, run_ff=False):
     elif (engine_case == 'dates'):
         factdatefiles = lookUpDate
 
+    print("["+stationName+"]["+year+"]Initializing SRI and Alerts.")
     alertDict= {}
     SRI = {}
     dateI = "01_01_"+year
@@ -106,7 +110,7 @@ def main( stationName, lookUpDate, run_ff=False):
     factdatefiles= sorted(factdatefiles)
 
 
-    print("Running Knowledge Engine.\n")
+    print("["+stationName+"]["+year+"]Running Knowledge Engine.")
     for date_iterator in factdatefiles:
         #put fact files into single fact list
         factlist= []
@@ -137,19 +141,28 @@ def main( stationName, lookUpDate, run_ff=False):
             pass #print('windsp data does not exist for: '+ date_iterator)
 
         #call knowledge engine to process analyze facts
-        #daySRI= ke.knowledge_engine( factlist)
-        daySRI, *alertDictapp= ke.knowledge_engine( factlist)
-        #ipdb.set_trace()
+        daySRI, alertDictapp= ke.knowledge_engine( factlist)
         SRI[date_iterator]=  daySRI
-        alertDict.update( alertDictapp[0])
-    print("Knowledge Engine Done.\nExporting SRI data.")
-    ipdb.set_trace()
+        alertDict.update( alertDictapp)
+    print("["+stationName+"]["+year+"]Knowledge Engine Done.")
 
+    print("["+stationName+"]["+year+"]Exporting SRI and Alert data.")
+    #exporting SRI and alert data
+
+    #checking file locations for sri and alert data exist. initializing them if
+    ##they do not.
     if not os.path.exists(os.path.dirname('../data/SRI/'+stationName+'/')):
         os.makedirs(os.path.dirname('../data/SRI/'+stationName+'/'))
+    if not os.path.exists(os.path.dirname('../data/alerts/'+stationName+'/')):
+        os.makedirs(os.path.dirname('../data/alerts/'+stationName+'/'))
 
+    #writing SRI list to csv file
     with open('../data/SRI/'+stationName+"/"+year+'.csv', mode='w') as sri_file:
         sri_writer = csv.writer(sri_file, delimiter=',')
         for date_iterator in factdatefiles:
             sri_writer.writerow([date_iterator, SRI[date_iterator]])
-    print("Data exported.\n")
+
+    #writing alert dict to json file
+    with open('../data/alerts/'+stationName+"/"+year+'.json', mode='w') as alert_file:
+        json.dump( alertDict, alert_file, indent=4)
+    print("["+stationName+"]["+year+"]SRI and Alert Data exported.\n\n")

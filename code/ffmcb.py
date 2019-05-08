@@ -5,7 +5,7 @@
 #       any ecoforecast. Not just MCB for MLRF1
 
 __author__= "Madison.Soden" 
-__date__= "Thu Oct 11, 2018  03:22PM"
+__date__= "Wed May 08, 2019  02:52PM"
 __license__= "NA?"
 __email__= "madison.soden@gmail.com"
 __status__= "Production"
@@ -82,13 +82,21 @@ class MyException(Exception):
 
 def factfactory(  filen, stationn):
     ##TO READ JSON string file
-    #check that user requested filename exists inf file archive
+    #check that user requested filename exists in file archive
     if os.path.exists('../data/data/'+filen+".json"):
         #read json file into a pandas data frame
         jsonstring= open('../data/data/'+filen+".json", 'r').read()
         df= pd.read_json(jsonstring, orient='split')
-        factorySort( df, filen, stationn)
-    else: 
+        #check that sst exists in yearly data before continuing to run.
+        numNA= df["WTMP"].isna().sum()
+        yearlen= len(df.index)
+        if( numNA> yearlen*0.9):
+            raise MyException("There is not enough sst data for station " +
+                    stationn+ "in "+ filen[-9:-5]+ " for an accurate analysis.")
+            return
+        else:
+            factorySort( df, filen, stationn)
+    else:
         #if requested file does not exist alert the user
         raise MyException(' '+filen+' data input file does not exist')
         return
