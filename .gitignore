@@ -45,3 +45,4 @@ data/alerts/*
 data/SRI/*
 *_work.py
 *.swp
+*/.ipynb_checkpoints/*

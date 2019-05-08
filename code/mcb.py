@@ -1,8 +1,7 @@
-#/usr/bin/env python3
 ### main function to call knowledge engine based ecoforecast pipeline
 
 __author__= "Madison.Soden"
-__date__= "Wed May 08, 2019  02:48PM"
+__date__= "Wed May 08, 2019  04:37PM"
 __license__= "NA?"
 __email__= "madison.soden@gmail.com"
 __status__= "Production"
@@ -51,18 +50,18 @@ def check_timeframe( lookUpDate):
 
 def check_file_path( stationName, year):
     if not(os.path.isdir( os.path.join("../data/facts", stationName))):
-        print("../data/facts/"+stationName+" is not an existing directory\n")
-        os.mkdir(os.path.join("../data/facts", stationName))
-        print("../data/facts/"+stationName+" directory created.\n")
+        print("\t../data/facts/"+stationName+" is not an existing directory")
+        os.makedirs(os.path.join("../data/facts", stationName))
+        print("\t../data/facts/"+stationName+" directory created.")
     if not(os.path.isdir( os.path.join("../data/facts", stationName, year))):
-        print("../data/facts/"+stationName+"/"+year+" is not an existing directory\n")
-        os.mkdir(os.path.join("../data/facts", stationName, year))
-        print("../data/facts/"+stationName+"/"+year+" directory created.\n")
+        print("\t../data/facts/"+stationName+"/"+year+" is not an existing directory")
+        os.makedirs(os.path.join("../data/facts", stationName, year))
+        print("\t../data/facts/"+stationName+"/"+year+" directory created.")
 
 def create_facts( stationName, year):
     factFileName= stationName+"h"+year
     insitu_to_json.main( factFileName) #parse insitu txt file and save as json file
-    ff.factfactory( factFileName, stationName) #call fact factory to generate facts
+    return ff.factfactory( factFileName, stationName) #call fact factory to generate facts
 
 def main( stationName, lookUpDate, run_ff=False):
 
@@ -71,15 +70,21 @@ def main( stationName, lookUpDate, run_ff=False):
     check_file_path(stationName, year)
     print("["+stationName+"]["+year+"]Data location confirmed.")
 
+    NANsst= False
+
     print("["+stationName+"]["+year+"]Running Fact Factory.")
     if run_ff: #run fact factory if asked to
-        create_facts( stationName, year)
+        NANsst= create_facts( stationName, year)
     else:  #checking to see if required fact data files exist
         glob_string= "../data/facts/"+stationName+"/"+year+"/*/*.json"
         fact_files_list= glob.glob(glob_string)
         if not(fact_files_list):
             #if the directory supposed to be containing fact files is empty rerun parser and ff
-            create_facts( stationName, year)
+            NANsst= create_facts( stationName, year)
+    if(NANsst):
+        print("["+stationName+"]["+year+"]Not enough SST data too run Knowledge Engine.\n\n")
+        return
+
     print("["+stationName+"]["+year+"]Facts Created.")
 
     print("["+stationName+"]["+year+"]Loading Facts.")

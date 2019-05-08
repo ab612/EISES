@@ -5,7 +5,7 @@
 #       any ecoforecast. Not just MCB for MLRF1
 
 __author__= "Madison.Soden" 
-__date__= "Wed May 08, 2019  02:52PM"
+__date__= "Wed May 08, 2019  04:37PM"
 __license__= "NA?"
 __email__= "madison.soden@gmail.com"
 __status__= "Production"
@@ -91,15 +91,14 @@ def factfactory(  filen, stationn):
         numNA= df["WTMP"].isna().sum()
         yearlen= len(df.index)
         if( numNA> yearlen*0.9):
-            raise MyException("There is not enough sst data for station " +
-                    stationn+ "in "+ filen[-9:-5]+ " for an accurate analysis.")
-            return
+            print("\tThere is not enough sst data for station " + stationn+ " in "+ filen[-4:]+ " for an accurate analysis.")
+            return True
         else:
             factorySort( df, filen, stationn)
     else:
         #if requested file does not exist alert the user
         raise MyException(' '+filen+' data input file does not exist')
-        return
+        return False
 
 def factorySort( df, filen, stationn):
 #partition data frame into series containing one fact type and then begin fact creation/storage process for each fact type separately
@@ -115,7 +114,7 @@ def factory( datadf, datatype, filen, stationn):
         assert MyException( 'datatype locus combination: '\
             +datatype+'/'+stationn+' does not have specified range file.\
             Cannot factize.')
-        return
+        return False
     if datadf.isnull().all():
         date= datadf.index.values[0]
         date=pd.Timestamp(date)

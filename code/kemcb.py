@@ -3,7 +3,7 @@
 ###mcb Ecoforecast prototype goal is to implement rules base from http://ecoforecast.coral.noaa.gov/index/0/MLRF1/model-detail&name=MASS-CORAL-BLEACHING and 'print' a forecast###
 
 __author__= "Madison Soden"
-__date__= "Tue May 07, 2019  05:24PM"
+__date__= "Wed May 08, 2019  04:45PM"
 __license__= "NA?"
 __email__= "madison.soden@gmail.com"
 __status__= "Production"
@@ -53,20 +53,20 @@ import ipdb;
 ###Helper functions###
 def fact_display( fact):
     ruleDict = {
-        'parsurf': '    p    -    parsurf\t',
-        'sst': '    s    -    sst\t',
-        'windsp': '    w    -    windsp\t',
-        'tide1m': '    t    -    tide1m\t',
-        'seandbc': '    a    -    seandbc\t',
-        'sea1m': '    e    -    sea1m\t',
-        'curveB': '    b    -    curveB\t',
-        'sea1mM': '    eM    -    sea1mM\t',
-        'seandbcM': '    aM    -    seandbcM\t',
-        'windsp3day': '    w3    -    windsp3day\t'}
-    print( ruleDict.get( fact['fact_type']), fact['date'])
-    print('\t\tTOD: ', fact['fuzzyTod'])
-    print('\t\tintensity: ', fact['fuzzyI'], ' =', fact['I'])
-    print('\t\tFact SRI: ', sri_calc(fact))
+        'parsurf':      'p (parsurf)',
+        'sst':          's (sst)',
+        'windsp':       'w (windsp)',
+        'tide1m':       't (tide1m)',
+        'seandbc':      'a (seandbc)',
+        'sea1m':        'e (sea1m)',
+        'curveB':       'b (curveB)',
+        'sea1mM':       'eM (sea1mM)',
+        'seandbcM':     'aM (seandbcM)',
+        'windsp3day':   'w3 (windsp3day)'}
+    print('\t\t  '+ ruleDict.get( fact['fact_type']))
+    print('\t\t\t  TOD:', fact['fuzzyTod'])
+    print('\t\t\t  Intensity: '+fact['fuzzyI']+' ('+str(fact['I'])+')')
+    print('\t\t\t  SRI:', sri_calc(fact))
 
 def sri_calc( fact):
     i_multiplier= {
@@ -310,12 +310,12 @@ class MCB( pk.KnowledgeEngine):
             pk.AS.windsp << fact.windsp( fuzzyI=anyof('dLow', 'vLow', 'Low'), fuzzyTod=anyof('morn', 'midd', 'psun', 'dayl', 'dayb', 'aftn', 'all')),
             pk.AS.seandbc << fact.seandbc( fuzzyI=anyof('High', 'vHigh', 'dHigh'), fuzzyTod=pk.W()))
     def mcb_PtwA(self, parsurf, tide1m, windsp, seandbc):
-        print("\n- Coral-Bleaching-PtwA fired")
+        print("\t  "+parsurf['date']+" Coral-Bleaching-PtwA fired.")
         fact_display(parsurf)
         fact_display(tide1m)
         fact_display(windsp)
         fact_display(seandbc)
-        sri = sri_calc(parsurf) +sri_calc(tide1m) +sri_calc(windsp) +sri_calc(seandbc) 
+        sri = sri_calc(parsurf) +sri_calc(tide1m) +sri_calc(windsp) +sri_calc(seandbc)
         self.SRI += sri
         self.alert_add( 'mcb_PtwA', 'Mass coral bleaching (high in-situ sea temperature + high light + low wind + low tide)', sri, [ parsurf, tide1m, windsp, seandbc])
         self.retract( parsurf)
@@ -330,7 +330,7 @@ class MCB( pk.KnowledgeEngine):
             pk.AS.windsp << fact.windsp( fuzzyI=anyof('dLow', 'vLow', 'Low'), fuzzyTod=anyof('morn', 'midd', 'psun', 'dayl', 'dayb', 'aftn', 'all')),
             pk.AS.sea1m << fact.sea1m( fuzzyI=anyof('High', 'vHigh', 'dHigh'), fuzzyTod=pk.W()))
     def mcb_PtwE(self, parsurf, tide1m, windsp, sea1m):
-        print("\n- Coral-Bleaching-PtwE fired")
+        print("\t  "+parsurf["date"]+ " Coral-Bleaching-PtwE fired.")
         fact_display( parsurf)
         fact_displary( tide1m)
         fact_display( windsp)
@@ -350,7 +350,7 @@ class MCB( pk.KnowledgeEngine):
             pk.AS.windsp << fact.windsp( fuzzyI=anyof('dLow', 'vLow', 'Low'), fuzzyTod=anyof('morn', 'midd', 'psun', 'dayl', 'dayb', 'aftn', 'aftn', 'all')),
             pk.AS.sst << fact.sst( fuzzyI=anyof('High', 'vHigh', 'dHigh'), fuzzyTod=pk.W()))
     def mcb_PtwS(self, parsurf, tide1m, windsp, sst):
-        print("\n- Coral-Bleaching-Tlwt fired")
+        print("\t  "+parsurf["date"]+" Coral-Bleaching-Tlwt fired.")
         fact_display( parsurf)
         fact_display( tide1m)
         fact_display( windsp)
@@ -369,7 +369,7 @@ class MCB( pk.KnowledgeEngine):
             pk.AS.windsp << fact.windsp( fuzzyI=anyof('dLow', 'vLow', 'Low'), fuzzyTod=anyof('morn', 'midd', 'psun', 'dayl', 'dayb', 'aftn', 'all')),
             pk.AS.seandbc << fact.seandbc( fuzzyI=anyof('High', 'vHigh', 'dHigh'), fuzzyTod=pk.W()))
     def mcb_PwA(self, parsurf, windsp, seandbc):
-        print("\n- Coral-Bleaching-PwA fired")
+        print("\t  "+parsurf["date"]+" Coral-Bleaching-PwA fired.")
         fact_display( parsurf)
         fact_display( windsp)
         fact_display( seandbc)
@@ -386,7 +386,7 @@ class MCB( pk.KnowledgeEngine):
             pk.AS.windsp << fact.windsp( fuzzyI=anyof('dLow', 'vLow', 'Low'), fuzzyTod=anyof('morn', 'midd', 'psun', 'day', 'dayb', 'aftn', 'all')),
             pk.AS.seandbc << fact.seandbc( fuzzyI=anyof('High', 'vHigh', 'dHigh'), fuzzyTod=pk.W()))
     def mcb_twA(self, tide1m, windsp, seandbc):
-        print("\n- Coral-Bleaching-twA")
+        print("\t  "+tide1m["date"]+" Coral-Bleaching-twA fired.")
         fact_display( tide1m)
         fact_display( windsp)
         fact_display( seandbc)
@@ -403,7 +403,7 @@ class MCB( pk.KnowledgeEngine):
             pk.AS.windsp << fact.windsp( fuzzyI=anyof('dLow', 'vLow', 'Low'), fuzzyTod=anyof('morn', 'midd', 'psun', 'dayl', 'dayb', 'aftn', 'all')),
             pk.AS.sea1m << fact.sea1m( fuzzyI=anyof('High', 'vHigh', 'dHigh'), fuzzyTod=pk.W()))
     def mcb_PwE(self, parsurf, windsp, sea1m):
-        print("\n- Coral-Bleaching-PwE fired")
+        print("\t  "+parsurf["date"]+" Coral-Bleaching-PwE fired.")
         fact_display( parsurf)
         fact_display( windsp)
         fact_display( sea1m)
@@ -420,7 +420,7 @@ class MCB( pk.KnowledgeEngine):
             pk.AS.windsp << fact.windsp( fuzzyI=anyof('dLow', 'vLow', 'Low'), fuzzyTod=anyof('morn', 'midd', 'psun', 'dayl', 'dayb', 'aftn', 'all')),
             pk.AS.sea1m << fact.sea1m( fuzzyI=anyof('High', 'vHigh', 'dHigh'), fuzzyTod=pk.W()))
     def mcb_twE(self, tide1m, windsp, sea1m):
-        print("\n- Coral-Bleaching-twE fired")
+        print("\t  "+tide1m["date"]+" Coral-Bleaching-twE fired.")
         fact_display( tide1m)
         fact_display( windsp)
         fact_display( sea1m)
@@ -438,7 +438,7 @@ class MCB( pk.KnowledgeEngine):
             pk.AS.windsp << fact.windsp( fuzzyI=anyof('dLow', 'vLow', 'Low'), fuzzyTod=anyof('morn', 'midd', 'psun', 'dayl', 'dayb', 'aftn', 'all')),
             pk.AS.sst << fact.sst( fuzzyI=anyof('High', 'vHigh', 'dHigh'), fuzzyTod=pk.W()))
     def mcb_PwS(self, parsurf, windsp, sst):
-        print("\n- Coral-Bleaching-PwS fired")
+        print("\t  "+parsurf["date"]+" Coral-Bleaching-PwS fired.")
         fact_display( parsurf)
         fact_display( windsp)
         fact_display( sst)
@@ -455,7 +455,7 @@ class MCB( pk.KnowledgeEngine):
             pk.AS.windsp << fact.windsp( fuzzyI=anyof('dLow', 'vLow', 'Low'), fuzzyTod=anyof('morn', 'midd', 'psun', 'dayl', 'dayb', 'aftn', 'all')),
             pk.AS.sst << fact.sst( fuzzyI=anyof('High', 'vHigh', 'dHigh'), fuzzyTod=pk.W()))
     def mcb_twS(self, tide1m, windsp, sst):
-        print("\n- Coral-Bleaching-twS fired")
+        print("\t  "+tide1m["date"]+" Coral-Bleaching-twS fired.")
         fact_display( tide1m)
         fact_display( windsp)
         fact_display( sst)
@@ -471,7 +471,7 @@ class MCB( pk.KnowledgeEngine):
     @pk.Rule(pk.AS.windsp3day << fact.windsp3day( fuzzyI=anyof('dLow', 'vLow', 'Low'), fuzzyTod=pk.W()),
             pk.AS.seandbc << fact.seandbc( fuzzyI=anyof('High', 'vHigh', 'dHigh'), fuzzyTod=pk.W()))
     def mcb_w3A(self, windsp3day, seandbc):
-        print("\n- Coral-Bleaching-w3A fired")
+        print("\t  "+windsp3day["date"]+" Coral-Bleaching-w3A fired.")
         fact_display( windsp3day)
         fact_display( seandbc)
         sri= sri_calc(windsp3day) +sri_calc(seandbc)
@@ -485,7 +485,7 @@ class MCB( pk.KnowledgeEngine):
     @pk.Rule(pk.AS.parsurf << fact.parsurf(fuzzyI=anyof('vHigh', 'dHigh'), fuzzyTod=anyof('midd', 'psun', 'dayl', 'aftn', 'all')),
             pk.AS.seandbc << fact.seandbc(fuzzyI=anyof('vHigh', 'dHigh'), fuzzyTod=pk.W()))
     def mcb_PA(self, parsurf, seandbc):
-        print("\n- Coral-Bleaching-PA fired")
+        print("\t  "+parsurf["date"]+" Coral-Bleaching-PA fired.")
         fact_display( parsurf)
         fact_display( seandbc)
         sri = sri_calc(parsurf) +sri_calc( seandbc)
@@ -499,7 +499,7 @@ class MCB( pk.KnowledgeEngine):
     @pk.Rule(pk.AS.windsp << fact.windsp( fuzzyI=anyof('dLow', 'vLow'), fuzzyTod= anyof('morn', 'midd', 'psun', 'dayl', 'dayb', 'aftn', 'all')),
             pk.AS.seandbc << fact.seandbc( fuzzyI=anyof('vHigh', 'dHigh'), fuzzyTod= pk.W()))
     def mcb_wA(self, windsp, seandbc):
-        print("\n- Coral-Bleaching-wA fired")
+        print("\t  "+windsp["date"]+" Coral-Bleaching-wA fired.")
         fact_display( windsp)
         fact_display( seandbc)
         sri= sri_calc( windsp) +sri_calc(seandbc)
@@ -513,7 +513,7 @@ class MCB( pk.KnowledgeEngine):
     @pk.Rule(pk.AS.windsp3day << fact.windsp3day(fuzzyI=anyof('dLow', 'vLow', 'Low'), fuzzyTod=pk.W()),
             pk.AS.sea1m << fact.sea1m( fuzzyI=anyof('High', 'dHigh', 'vHigh'), fuzzyTod=pk.W()))
     def mcb_w3E(self, windsp3day, sea1m):
-        print("\n- Coral-Bleaching-w3E fired")
+        print("\t  "+windsp3day["date"]+" Coral-Bleaching-w3E fired.")
         fact_display( windsp3day)
         fact_display( sea1m)
         sri= sri_calc( windsp3day) +sri_calc( sea1m)
@@ -527,7 +527,7 @@ class MCB( pk.KnowledgeEngine):
     @pk.Rule(pk.AS.parsurf << fact.parsurf(fuzzyI=anyof('vHigh', 'dHigh'), fuzzyTod=anyof('midd', 'dayl', 'all')),
             pk.AS.sea1m << fact.sea1m( fuzzyI=anyof('vHigh', 'dHigh'), fuzzyTod=pk.W()))
     def mcb_PE(self, parsurf, sea1m):
-        print("\n- Coral-Bleaching-PE fired")
+        print("\t  "+parsurf["date"]+" Coral-Bleaching-PE fired.")
         fact_display( parsurf)
         fact_display( sea1m)
         sri= sri_calc( parsurf) +sri_calc( sea1m)
@@ -541,7 +541,7 @@ class MCB( pk.KnowledgeEngine):
     @pk.Rule(pk.AS.windsp << fact.windsp(fuzzyI=anyof('dLow', 'vLow'), fuzzyTod=anyof('morn', 'midd', 'psun', 'dayl', 'dayb', 'aftn', 'all')),
             pk.AS.sea1m << fact.sea1m(fuzzyI=anyof('vHigh', 'dHigh'), fuzzyTod=pk.W()))
     def mcb_wE(self, windsp, sea1m):
-        print("\n- Coral-Bleaching-wE fired")
+        print("\t  "+windsp["date"]+" Coral-Bleaching-wE fired.")
         fact_display( windsp)
         fact_display( sea1m)
         sri= sri_calc( windsp) +sri_calc( sea1m)
@@ -555,7 +555,7 @@ class MCB( pk.KnowledgeEngine):
     @pk.Rule(pk.AS.parsurf << fact.parsurf(fuzzyI=anyof('vHigh', 'dHigh'), fuzzyTod=anyof('midd', 'dayl', 'all')),
             pk.AS.sst << fact.sst(fuzzyI=anyof('vHigh', 'dHigh'), fuzzyTod=pk.W()))
     def mcb_PS(self, parsurf, sst):
-        print("\n- Coral-Bleaching-PS fired")
+        print("\t  "+parsurf["date"]+" Coral-Bleaching-PS fired.")
         fact_display( parsurf)
         fact_display( sst)
         sri= sri_calc( parsurf) +sri_calc( sst)
@@ -570,7 +570,7 @@ class MCB( pk.KnowledgeEngine):
     @pk.Rule(pk.AS.windsp << fact.windsp(fuzzyI=anyof('dLow', 'vLow'), fuzzyTod=anyof('morn', 'midd', 'psun', 'dayl', 'dayb', 'aftn', 'all')),
             pk.AS.sst << fact.sst(fuzzyI=anyof('vHigh', 'dHigh'), fuzzyTod=pk.W()))
     def mcb_wS(self, windsp, sst):
-        print("\n- Coral-Bleaching-wS fired")
+        print("\t  "+windsp["date"]+" Coral-Bleaching-wS fired.")
         fact_display( windsp)
         fact_display( sst)
         sri= sri_calc( windsp) +sri_calc( sst)
@@ -584,7 +584,7 @@ class MCB( pk.KnowledgeEngine):
 ##Description: Mass coral bleaching (Berkelmans bleaching curve)
     @pk.Rule(pk.AS.curveB << fact.curveB(fuzzyI=anyof('Conductive', 'vConductive'), fuzzyTod=pk.W()))
     def mcb_B(self, curveB):
-        print("\n- Coral-Bleaching-B fired")
+        print("\t  "+curveB["date"]+" Coral-Bleaching-B fired.")
         fact_display( curveB)
         sri= sri_calc( curveB)
         self.SRI += sri
@@ -596,7 +596,7 @@ class MCB( pk.KnowledgeEngine):
 ##Description: Mass coral bleaching (drastic high in-situ sea temperature)
     @pk.Rule(pk.AS.seandbc << fact.seandbc( fuzzyI=anyof('dHigh'), fuzzyTod=pk.W()))
     def mcb_A(self, seandbc):
-        print("\n- Coral-Bleaching-A fired")
+        print("\t  "+seandbc["date"]+" Coral-Bleaching-A fired.")
         fact_display( seandbc)
         sri= sri_calc( seandbc)
         self.SRI += sri
@@ -608,7 +608,7 @@ class MCB( pk.KnowledgeEngine):
 ##Description: Mass coral mortality (>50%) for local sensitive species (Berkelmans)
     @pk.Rule(pk.AS.curveB << fact.curveB(fuzzyI=anyof('Mortality', 'hMortality'), fuzzyTod=pk.W())) 
     def mcb_BB(self, curveB):
-        print("\n- Coral-Bleaching-BB fired")
+        print("\t  "+curveB["date"]+" Coral-Bleaching-BB fired.")
         fact_display( curveB)
         sri= sri_calc( curveB)
         self.SRI += sri
@@ -620,7 +620,7 @@ class MCB( pk.KnowledgeEngine):
 ##Description: Mass coral bleaching (high monthly mean 'shallow' sea temperature)
     @pk.Rule(pk.AS.sea1mM << fact.sea1mM(fuzzyI=anyof('High', 'vHigh', 'dHigh'), fuzzyTod=pk.W()))
     def mcb_EM(self, sea1mM):
-        print("\n- Coral-Bleaching-EM fired")
+        print("\t  "+sea1mM+" Coral-Bleaching-EM fired.")
         fact_display( sea1mM)
         sri = sri_calc( sea1mM)
         self.SRI += sri
@@ -632,7 +632,7 @@ class MCB( pk.KnowledgeEngine):
 ##Description: Mass coral bleaching (high monthly mean in situ sea temperature)
     @pk.Rule(pk.AS.seandbcM << fact.seandbcM(fuzzyI=anyof('High', 'vHigh', 'dHigh'), fuzzyTod=pk.W()))
     def mcb_AM(self, seandbcM):
-        print("\n- Coral-Bleaching-AM fired")
+        print("\t  "+seandbcM["date"]+" Coral-Bleaching-AM fired.")
         fact_display( seandbcM)
         sri= sri_calc( seandbcM)
         self.SRI += sri
@@ -644,7 +644,7 @@ class MCB( pk.KnowledgeEngine):
 ##Description: Mass coral bleaching (drastic high 'shallow' sea temperature)
     @pk.Rule(pk.AS.sea1m << fact.sea1m(fuzzyI=pk.L('dHigh'), fuzzyTod=pk.W()))
     def mcb_E(self, sea1m):
-        print("\n- Coral-Bleaching-E fired")
+        print("\t  "+sea1m["date"]+" Coral-Bleaching-E fired.")
         fact_display( sea1m)
         sri= sri_calc( sea1m)
         self.SRI += sri
@@ -656,7 +656,7 @@ class MCB( pk.KnowledgeEngine):
 ##Description: Mass coral bleaching (drastic high SST)
     @pk.Rule(pk.AS.sst << fact.sst(fuzzyI=pk.L('dHigh'), fuzzyTod=pk.W()))
     def mcb_S(self, sst):
-        print("\n- Coral-Bleaching-S fired")
+        print("\t  "+sst["date"]+" Coral-Bleaching-S fired.")
         fact_display( sst)
         sri= sri_calc( sst)
         self.SRI += sri
@@ -672,5 +672,4 @@ def knowledge_engine( factlist):
     for f in factlist:
         e.declare( f)
     e.run()
-    #ipdb.set_trace()
     return e.SRI, e.alerts
