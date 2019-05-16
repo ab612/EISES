@@ -1,7 +1,7 @@
 ### main function to call knowledge engine based ecoforecast pipeline
 
 __author__= "Madison.Soden"
-__date__= "Wed May 08, 2019  04:37PM"
+__date__= "Wed May 15, 2019  05:57PM"
 __license__= "NA?"
 __email__= "madison.soden@gmail.com"
 __status__= "Production"
@@ -146,7 +146,7 @@ def main( stationName, lookUpDate, run_ff=False):
             pass #print('windsp data does not exist for: '+ date_iterator)
 
         #call knowledge engine to process analyze facts
-        daySRI, alertDictapp= ke.knowledge_engine( factlist)
+        daySRI, alertDictapp= ke.knowledge_engine( factlist,stationName)
         SRI[date_iterator]=  daySRI
         alertDict.update( alertDictapp)
     print("["+stationName+"]["+year+"]Knowledge Engine Done.")

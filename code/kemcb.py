@@ -3,7 +3,7 @@
 ###mcb Ecoforecast prototype goal is to implement rules base from http://ecoforecast.coral.noaa.gov/index/0/MLRF1/model-detail&name=MASS-CORAL-BLEACHING and 'print' a forecast###
 
 __author__= "Madison Soden"
-__date__= "Wed May 08, 2019  04:45PM"
+__date__= "Wed May 15, 2019  05:58PM"
 __license__= "NA?"
 __email__= "madison.soden@gmail.com"
 __status__= "Production"
@@ -120,8 +120,9 @@ def anyof(*values):
 
 class MCB( pk.KnowledgeEngine):
 
-    def __init__(self):
+    def __init__(self, station):
         pk.KnowledgeEngine.__init__(self)
+        self.station= station
         self.SRI= 0
         self.alerts = {}
 
@@ -139,12 +140,7 @@ class MCB( pk.KnowledgeEngine):
     def alert_add( self, ruleName, rule_des, sri, factList):
         date= factList[0]['date']
         i= 0
-        #ARE the facts passed by reference of by value
-        #ipdb break
-        #adjust fact
-        #step out to the main knowledge engine
-        #check fact
-        alertName= date+ruleName+"#"+str(i)
+        alertName= date+self.station+ruleName+"#"+str(i)
         while True:
             if alertName in self.alerts.keys():
                 i+=1
@@ -664,8 +660,8 @@ class MCB( pk.KnowledgeEngine):
         self.retract( sst)
 
 
-def knowledge_engine( factlist):
-    e= MCB()
+def knowledge_engine( factlist, station):
+    e= MCB(station)
     e.reset()
     if len(factlist) == 0:
         return 0, {}
