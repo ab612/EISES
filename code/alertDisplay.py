@@ -1,6 +1,5 @@
 import os
 import json
-import ipdb
 import re
 
 def get_len( listobj):
@@ -63,3 +62,4 @@ def alert_load( stations, startY, endY):
 def main( stations, startY, endY):
     stationdict= alert_load(stations, startY, endY)
     alert_display( stationdict)
+    return stationdict
