@@ -14,13 +14,14 @@ import json
 import datetime
 import numpy as np
 from .dataframe_averaging import * 
+import configParameters as config
 
 def main( filename):
     ###########################################################
     # 1.PARSING txt file 
     ###########################################################
 
-    with open('../data/data/'+ filename+'.txt', 'r') as fin:
+    with open(config.data+'/data/'+ filename+'.txt', 'r') as fin:
         data = fin.read().splitlines(True)
     ##Parsing units and header
     header= data[0]
@@ -165,7 +166,7 @@ def main( filename):
     #################################################################
     ##Creating json file
     jsondf= df.to_json(orient='split')
-    with open('../data/data/'+filename+'.json', 'w') as f:
+    with open(config.data+'/data/'+filename+'.json', 'w') as f:
         f.write(jsondf)
 
 #TO READ JSON string file

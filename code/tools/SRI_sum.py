@@ -2,9 +2,10 @@ import csv
 from os import listdir
 from os.path import isfile
 import pandas as pd
+import configParameters as config
 
 def main( stationName): 
-    SRI_file_path= "../data/SRI/"+stationName
+    SRI_file_path= config.data+"/SRI/"+stationName
     SRI_file_list= [ f for f in listdir(SRI_file_path) if isfile(SRI_file_path+"/"+f)]
     SRI_file_list.sort()
     SRI_year_sums= {}

@@ -1,7 +1,8 @@
 import os
 import json
-import ipdb
 import re
+
+import configParameters as config
 
 def get_len( listobj):
     if listobj is None:
@@ -23,12 +24,12 @@ def alert_display( stationdict):
 
 def import_alert_dict(alertDict, years, station):
     for y in years:
-        if os.path.isfile("../data/alerts/"+station+"/"+str(y)+".json"):
-            with open("../data/alerts/"+station+"/"+str(y)+".json") as alertfile:
+        if os.path.isfile(config.data+"/alerts/"+station+"/"+str(y)+".json"):
+            with open(config.data+"/alerts/"+station+"/"+str(y)+".json") as alertfile:
                 dictImport= json.load( alertfile)
             alertDict.update( dictImport)
         else:
-            print("\tThe file \"../data/alerts/"+station+"/"+str(y)+".json\" does not exist\n")
+            print("\tThe file \""+config.data+"/alerts/"+station+"/"+str(y)+".json\" does not exist\n")
 
 def alert_load( stations, startY, endY):
     alertDict= {}

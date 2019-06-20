@@ -12,9 +12,9 @@ __status__= "Production"
 ############################################################################################???????????????????????????? rule 18 verse rule 20 supposed to call different facts???????????????????????
 
 import pyknow as pk
-from IPython import embed
+
+import configParameters as config
 import fact
-import ipdb;
 
 ###Fact Definition Documentation###
     #fact names are declared as 'parsurf', 'sst', 'windsp', 'tide1m',
@@ -124,6 +124,7 @@ class MCB( pk.KnowledgeEngine):
         pk.KnowledgeEngine.__init__(self)
         self.station= station
         self.SRI= 0
+        self.MaxSRI= 0
         self.alerts = {}
 
     def retract(self, idx_or_declared_fact):
@@ -313,6 +314,7 @@ class MCB( pk.KnowledgeEngine):
         fact_display(seandbc)
         sri = sri_calc(parsurf) +sri_calc(tide1m) +sri_calc(windsp) +sri_calc(seandbc)
         self.SRI += sri
+        self.MaxSRI += config.sri_max_4f 
         self.alert_add( 'mcb_PtwA', 'Mass coral bleaching (high in-situ sea temperature + high light + low wind + low tide)', sri, [ parsurf, tide1m, windsp, seandbc])
         self.retract( parsurf)
         self.retract( tide1m)
@@ -333,6 +335,7 @@ class MCB( pk.KnowledgeEngine):
         fact_display( sea1m)
         sri= sri_calc(parsurf) +sri_calc(tide1m) +sri_calc(windsp) +sri_calc(sea1m)
         self.SRI += sri
+        self.MaxSRI += config.sri_max_4f
         self.alert_add( 'mcb_PtwE', 'Mass coral bleaching (high \'shallow\' sea temperature + high light + low wind + low tide)', sri, [ parsurf, tide1m, windsp, sea1m])
         self.retract( parsurf)
         self.retract( tide1m)
@@ -353,6 +356,7 @@ class MCB( pk.KnowledgeEngine):
         fact_display( sst)
         sri= sri_calc(parsurf) +sri_calc(tide1m) +sri_calc(windsp) +sri_calc(sst)
         self.SRI += sri
+        self.MaxSRI += config.sri_max_4f
         self.alert_add( 'mcb_PtwS', 'Mass coral bleaching (high SST + high light + low wind + low tide)', sri, [ parsurf, tide1m, windsp, sst])
         self.retract( parsurf)
         self.retract( tide1m)
@@ -371,6 +375,7 @@ class MCB( pk.KnowledgeEngine):
         fact_display( seandbc)
         sri= sri_calc(parsurf) +sri_calc(windsp) +sri_calc(seandbc)
         self.SRI += sri
+        self.MaxSRI += config.sri_max_3f
         self.alert_add( 'mcb_PwA', 'Mass coral bleaching (high in-situ sea temperature + high light + low wind)', sri, [ parsurf, windsp, seandbc])
         self.retract( parsurf)
         self.retract( windsp)
@@ -388,6 +393,7 @@ class MCB( pk.KnowledgeEngine):
         fact_display( seandbc)
         sri= sri_calc(tide1m) +sri_calc(windsp) +sri_calc(seandbc)
         self.SRI += sri
+        self.MaxSRI += config.sri_max_3f
         self.alert_add( 'mcb_twA', 'Mass coral bleaching (high in-situ sea temperature + low wind + low tide)', sri, [ tide1m, windsp, seandbc])
         self.retract( tide1m)
         self.retract( windsp)
@@ -405,6 +411,7 @@ class MCB( pk.KnowledgeEngine):
         fact_display( sea1m)
         sri= sri_calc(parsurf) +sri_calc(windsp) +sri_calc(sea1m)
         self.SRI += sri
+        self.MaxSRI += config.sri_max_3f
         self.alert_add( 'mcb_PwE', 'Mass coral bleaching (high \'shallow\' sea temperature + high light + low wind)', sri, [ parsurf, windsp, sea1m])
         self.retract( parsurf)
         self.retract( windsp)
@@ -422,6 +429,7 @@ class MCB( pk.KnowledgeEngine):
         fact_display( sea1m)
         sri= sri_calc(tide1m) +sri_calc(windsp) +sri_calc(sea1m)
         self.SRI += sri
+        self.MaxSRI += config.sri_max_3f
         self.alert_add( 'mcb_twE', 'Mass coral bleaching (high \'shallow\' sea temperature + low wind + low tide)', sri, [ tide1m, windsp, sea1m])
         self.retract( tide1m)
         self.retract( windsp)
@@ -457,6 +465,7 @@ class MCB( pk.KnowledgeEngine):
         fact_display( sst)
         sri= sri_calc(tide1m) +sri_calc(windsp) +sri_calc(sst)
         self.SRI += sri
+        self.MaxSRI += config.sri_max_3f
         self.alert_add( 'mcb_twS', 'Mass coral bleaching (high SST + low wind + low tide)', sri, [ tide1m, windsp, sst])
         self.retract( tide1m)
         self.retract( windsp)
@@ -465,13 +474,14 @@ class MCB( pk.KnowledgeEngine):
 ##Ecoforecast Rule #10: Coral-Bleaching-w3A
 ##Description: Mass coral bleaching (high in-situ sea temperature + doldrums)
     @pk.Rule(pk.AS.windsp3day << fact.windsp3day( fuzzyI=anyof('dLow', 'vLow', 'Low'), fuzzyTod=pk.W()),
-            pk.AS.seandbc << fact.seandbc( fuzzyI=anyof('High', 'vHigh', 'dHigh'), fuzzyTod=pk.W()))
+            pk.AS.seandbc << fact.seandbc( fuzzyI=anyof( 'vHigh', 'dHigh'), fuzzyTod=pk.W())) #removed "High" to match MatLab restrictions better
     def mcb_w3A(self, windsp3day, seandbc):
         print("\t  "+windsp3day["date"]+" Coral-Bleaching-w3A fired.")
         fact_display( windsp3day)
         fact_display( seandbc)
         sri= sri_calc(windsp3day) +sri_calc(seandbc)
         self.SRI += sri
+        self.MaxSRI += config.sri_max_2f
         self.alert_add( 'mcb_w3A', 'Mass coral bleaching (high in-situ sea temperature + doldrums)', sri, [ windsp3day, seandbc])
         self.retract( windsp3day)
         self.retract( seandbc)
@@ -486,13 +496,15 @@ class MCB( pk.KnowledgeEngine):
         fact_display( seandbc)
         sri = sri_calc(parsurf) +sri_calc( seandbc)
         self.SRI += sri
+        self.MaxSRI += config.sri_max_2f
         self.alert_add( 'mcb_PA', 'Mass coral bleaching (very high in-situ sea temperature + very high light)', sri, [ parsurf, seandbc])
         self.retract( parsurf)
         self.retract( seandbc)
 
 ##Ecoforecast Rule #12: Coral-Bleaching-wA
 ##Description: Mass coral bleaching (very high in-situ sea temperature + very low wind)
-    @pk.Rule(pk.AS.windsp << fact.windsp( fuzzyI=anyof('dLow', 'vLow'), fuzzyTod= anyof('morn', 'midd', 'psun', 'dayl', 'dayb', 'aftn', 'all')),
+    @pk.Rule(pk.AS.windsp << fact.windsp( fuzzyI=anyof('dLow'), fuzzyTod=
+        anyof('morn', 'midd', 'psun', 'dayl', 'dayb', 'aftn', 'all')), #removed "vLow" to match MatLab restrictions better
             pk.AS.seandbc << fact.seandbc( fuzzyI=anyof('vHigh', 'dHigh'), fuzzyTod= pk.W()))
     def mcb_wA(self, windsp, seandbc):
         print("\t  "+windsp["date"]+" Coral-Bleaching-wA fired.")
@@ -500,6 +512,7 @@ class MCB( pk.KnowledgeEngine):
         fact_display( seandbc)
         sri= sri_calc( windsp) +sri_calc(seandbc)
         self.SRI += sri
+        self.MaxSRI += config.sri_max_2f
         self.alert_add( 'mcb_wA', 'Mass coral bleaching (very high in-situ sea temperature + very low wind)', sri, [ windsp, seandbc])
         self.retract( windsp)
         self.retract( seandbc)
@@ -514,6 +527,7 @@ class MCB( pk.KnowledgeEngine):
         fact_display( sea1m)
         sri= sri_calc( windsp3day) +sri_calc( sea1m)
         self.SRI += sri
+        self.MaxSRI += config.sri_max_2f
         self.alert_add( 'mcb_w3E', 'Mass coral bleaching (high \'shallow\' sea temperature + doldrums)', sri, [ windsp3day, sea1m])
         self.retract( windsp3day)
         self.retract( sea1m)
@@ -528,6 +542,7 @@ class MCB( pk.KnowledgeEngine):
         fact_display( sea1m)
         sri= sri_calc( parsurf) +sri_calc( sea1m)
         self.SRI += sri
+        self.MaxSRI += config.sri_max_2f
         self.alert_add( 'mcb_PE', 'Mass coral bleaching (very high \'shallow\' sea temperature + very high light)', sri, [ parsurf, sea1m])
         self.retract( parsurf)
         self.retract( sea1m)
@@ -542,6 +557,7 @@ class MCB( pk.KnowledgeEngine):
         fact_display( sea1m)
         sri= sri_calc( windsp) +sri_calc( sea1m)
         self.SRI += sri
+        self.MaxSRI += config.sri_max_2f
         self.alert_add( 'mcb_wE', 'Mass coral bleaching (very high \'shallow\' sea temperature + very low wind)', sri, [ windsp, sea1m])
         self.retract( windsp)
         self.retract( sea1m)
@@ -556,6 +572,7 @@ class MCB( pk.KnowledgeEngine):
         fact_display( sst)
         sri= sri_calc( parsurf) +sri_calc( sst)
         self.SRI += sri
+        self.MaxSRI += config.sri_max_2f
         self.alert_add( 'mcb_PS', 'Mass coral bleaching (very high SST + very high light)', sri, [ parsurf, sst])
         self.retract( parsurf)
         self.retract( sst)
@@ -571,6 +588,7 @@ class MCB( pk.KnowledgeEngine):
         fact_display( sst)
         sri= sri_calc( windsp) +sri_calc( sst)
         self.SRI += sri
+        self.MaxSRI += config.sri_max_2f
         self.alert_add( 'mcb_wS', 'Mass coral bleaching (very high SST + very low wind)', sri, [ windsp, sst])
         self.retract( windsp)
         self.retract( sst)
@@ -584,6 +602,7 @@ class MCB( pk.KnowledgeEngine):
         fact_display( curveB)
         sri= sri_calc( curveB)
         self.SRI += sri
+        self.MaxSRI += config.sri_max_1f
         self.alert_add( 'mcb_B', 'Mass coral bleaching (Berkelmans bleaching curve)', sri, [ curveB])
         self.retract( curveB)
 
@@ -596,6 +615,7 @@ class MCB( pk.KnowledgeEngine):
         fact_display( seandbc)
         sri= sri_calc( seandbc)
         self.SRI += sri
+        self.MaxSRI += config.sri_max_1f
         self.alert_add( 'mcb_A', 'Mass coral bleaching (drastic high in-situ sea temperature)', sri, [ seandbc])
         self.retract( seandbc)
 
@@ -608,6 +628,7 @@ class MCB( pk.KnowledgeEngine):
         fact_display( curveB)
         sri= sri_calc( curveB)
         self.SRI += sri
+        self.MaxSRI += config.sri_max_1f
         self.alert_add( 'mcb_BB', 'Mass coral mortality (>50%) for local sensitive species (Berkelmans)', sri, [curveB])
         self.retract( curveB)
 
@@ -620,18 +641,20 @@ class MCB( pk.KnowledgeEngine):
         fact_display( sea1mM)
         sri = sri_calc( sea1mM)
         self.SRI += sri
+        self.MaxSRI += config.sri_max_1f
         self.alert_add( 'mcb_EM', 'Mass coral bleaching (high monthly mean \'shallow\' sea temperature)', sri, [sea1mM])
         self.retract( sea1mM)
 
 
 ##Ecoforecast Rule #22: Coral-Bleaching-AM
 ##Description: Mass coral bleaching (high monthly mean in situ sea temperature)
-    @pk.Rule(pk.AS.seandbcM << fact.seandbcM(fuzzyI=anyof('High', 'vHigh', 'dHigh'), fuzzyTod=pk.W()))
+    @pk.Rule(pk.AS.seandbcM << fact.seandbcM(fuzzyI=anyof( 'vHigh', 'dHigh'), fuzzyTod=pk.W())) #removed "High" to match MatLab restrictions better
     def mcb_AM(self, seandbcM):
         print("\t  "+seandbcM["date"]+" Coral-Bleaching-AM fired.")
         fact_display( seandbcM)
         sri= sri_calc( seandbcM)
         self.SRI += sri
+        self.MaxSRI += config.sri_max_1f
         self.alert_add( 'mcb_AM', 'Mass coral bleaching (high monthly mean in situ sea temperature)', sri, [seandbcM])
         self.retract( seandbcM)
 
@@ -644,6 +667,7 @@ class MCB( pk.KnowledgeEngine):
         fact_display( sea1m)
         sri= sri_calc( sea1m)
         self.SRI += sri
+        self.MaxSRI += config.sri_max_1f
         self.alert_add( 'mcb_E', "Mass coral bleaching (drastic high \'shallow\' sea temperature)", sri, [sea1m])
         self.retract( sea1m)
 
@@ -656,6 +680,7 @@ class MCB( pk.KnowledgeEngine):
         fact_display( sst)
         sri= sri_calc( sst)
         self.SRI += sri
+        self.MaxSRI += config.sri_max_1f
         self.alert_add( "mcb_S", "Mass coral bleaching (drastic high SST)", sri, [sst])
         self.retract( sst)
 
@@ -664,8 +689,8 @@ def knowledge_engine( factlist, station):
     e= MCB(station)
     e.reset()
     if len(factlist) == 0:
-        return 0, {}
+        return 0, 0, {}
     for f in factlist:
         e.declare( f)
     e.run()
-    return e.SRI, e.alerts
+    return e.SRI, e.MaxSRI, e.alerts

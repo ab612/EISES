@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-### main function to creat facts
+### main function to create facts
 
 
 __author__= "Madison.Soden"
@@ -11,7 +11,6 @@ __status__= "Production"
 
 import pyknow as pk
 import numpy as np
-from IPython import embed
 
 class airt( pk.Fact):
     pass

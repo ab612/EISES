@@ -10,18 +10,19 @@ __license__= "NA?"
 __email__= "madison.soden@gmail.com"
 __status__= "Production"
 
-import pyknow as pk
+import os
+import os.path
 import pandas as pd
+import pyknow as pk
+import numpy as np
 import json
 import csv
-import fuzzy_ranges_values as frv
-import os.path
-import numpy as np
 import datetime
-import os
-from IPython import embed
+
+import configParameters as config
 import fact
 import fffunctions as fff
+import fuzzy_ranges_values as frv
 
 def data2function( index):
 #dictionary function to return a call to fact type specific generating functions given a fact data frame abbreviation
@@ -83,14 +84,14 @@ class MyException(Exception):
 def factfactory(  filen, stationn):
     ##TO READ JSON string file
     #check that user requested filename exists in file archive
-    if os.path.exists('../data/data/'+filen+".json"):
+    if os.path.exists(config.data+'/data/'+filen+".json"):
         #read json file into a pandas data frame
-        jsonstring= open('../data/data/'+filen+".json", 'r').read()
+        jsonstring= open(config.data+'/data/'+filen+".json", 'r').read()
         df= pd.read_json(jsonstring, orient='split')
         #check that sst exists in yearly data before continuing to run.
         numNA= df["WTMP"].isna().sum()
-        yearlen= len(df.index)
-        if( numNA> yearlen*0.9):
+        hourlyYearLen= config.insitu_samplingRate #Hourly len(df.index)
+        if( numNA> hourlyYearLen*0.5):
             print("\tThere is not enough sst data for station " + stationn+ " in "+ filen[-4:]+ " for an accurate analysis.")
             return True
         else:
@@ -120,7 +121,7 @@ def factory( datadf, datatype, filen, stationn):
         date=pd.Timestamp(date)
         date=pd.to_datetime(date)
         date=date.strftime('%m_%d_%Y')
-        assert MyException( 'Data does not exisit or is not recorded for: '\
+        assert MyException( 'Data does not exist or is not recorded for: '\
                 +datatype + ', ' + stationn + ', ' + date +'/n')
 
     ##else continue to factize datadf
@@ -161,10 +162,10 @@ def factory( datadf, datatype, filen, stationn):
 def factoryStore( factlist, factname, filen, date):
     year= filen[-4:]
     #create directory for corresponding date if one does not already exist
-    if not os.path.exists(os.path.dirname('../data/facts/'+filen[:5]+'/'+year+'/'+date+'/'+factname+'.json')):
-        os.makedirs(os.path.dirname('../data/facts/'+filen[:5]+'/'+year+'/'+date+'/'+factname+'.json'))
+    if not os.path.exists(os.path.dirname(config.data+'/facts/'+filen[:5]+'/'+year+'/'+date+'/'+factname+'.json')):
+        os.makedirs(os.path.dirname(config.data+'/facts/'+filen[:5]+'/'+year+'/'+date+'/'+factname+'.json'))
     #save list of specific date & fact type as json file
-    with open('../data/facts/'+filen[:5]+'/'+year+'/'+date+'/'+factname+'.json', 'w') as fout:
+    with open(config.data+'/facts/'+filen[:5]+'/'+year+'/'+date+'/'+factname+'.json', 'w') as fout:
         json.dump( factlist, fout)
 
 def fuzzyTod( t):
