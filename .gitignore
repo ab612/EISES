@@ -44,6 +44,6 @@ data/facts/*
 data/alerts/*
 data/SRI/*
 *_work.py
-*/previous_code_backups/*
+previous_code_backups/*
 *.swp
 */.ipynb_checkpoints/*
