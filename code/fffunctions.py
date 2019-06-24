@@ -9,7 +9,6 @@ __email__= 'madison.soden@gmail.com'
 __status__= 'Production'
 
 import fact
-from IPython import embed
 
  # 'night-hours'.-.'nite'.-.0000.to.0900$
  # 'dawn-morning'.-.'dayb'.-.0900.to.1500$

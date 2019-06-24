@@ -11,10 +11,9 @@ __email__= "madison.soden@gmail.com"
 __status__= "Production"
 
 import pandas as pd 
+import numpy as np
 import json 
 import datetime
-import numpy as np
-from IPython import embed
 
 def cleanDataframe( df):
     df= df.reindex(pd.date_range( df.index[1], df.index[-1], freq='H'))
@@ -79,5 +78,3 @@ def cuttimeseries( df):
         return None
     df= df[start:(end)]
     return df
-
-
