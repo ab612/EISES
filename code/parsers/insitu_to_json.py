@@ -14,14 +14,14 @@ import json
 import datetime
 import numpy as np
 from .dataframe_averaging import * 
-#import ipdb
+import configParameters as config
 
-def main( filename, isRT):
+def main( filename):
     ###########################################################
     # 1.PARSING txt file 
     ###########################################################
 
-    with open('../data/data/'+ filename+'.txt', 'r') as fin:
+    with open(config.data+'/data/'+ filename+'.txt', 'r') as fin:
         data = fin.read().splitlines(True)
     ##Parsing units and header
     header= data[0]
@@ -37,8 +37,6 @@ def main( filename, isRT):
         data=data[2:]
 
     ##parsing the rest of data into properly formatted lists
-    if(isRT):
-        data= data[::-1]
     datal= len(data)
     i=0
     while (i < datal):
@@ -166,10 +164,9 @@ def main( filename, isRT):
     #################################################################
     # 3. PUTTING DATA FRAME INTO JSON FILE
     #################################################################
-    #####################################################################################ipdb.set_trace() 
     ##Creating json file
     jsondf= df.to_json(orient='split')
-    with open('../data/data/'+filename+'.json', 'w') as f:
+    with open(config.data+'/data/'+filename+'.json', 'w') as f:
         f.write(jsondf)
 
 #TO READ JSON string file
