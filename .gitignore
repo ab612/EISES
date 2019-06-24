@@ -40,5 +40,11 @@ Thumbs.db
 ####################
 __pycache__/
 docs/
+data/facts/*
+data/alerts/*
+data/SRI/*
+*_work.py
+previous_code_backups/*
+*/.ipynb_checkpoints/*
 *.swp
 *.pyc
